@@ -1,8 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="120" height="150" viewBox="0 0 120 150">
   <rect width="120" height="150" fill="none" />
-  <g fill="none" stroke="#213941" stroke-width="3">
-    <circle cx="50" cy="50" r="8" />
-    <circle cx="70" cy="50" r="8" />
-    <path d="M58 50h4" stroke-linecap="round" />
+  <g id="accessory-round-glasses">
+    <g id="frames" fill="none" stroke="#213941" stroke-width="3">
+      <circle id="left-lens" cx="50" cy="50" r="8" />
+      <circle id="right-lens" cx="70" cy="50" r="8" />
+      <path id="bridge" d="M58 50h4" stroke-linecap="round" />
+    </g>
   </g>
 </svg>

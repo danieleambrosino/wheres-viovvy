@@ -1,11 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="120" height="150" viewBox="0 0 120 150">
   <rect width="120" height="150" fill="none" />
-  <path d="M34 79c4-7 13-10 26-10s22 3 26 10l9 24-11 6-8-18v54H44V91l-8 18-11-6 9-24Z" fill="#e8ddc4" />
-  <rect x="52" y="76" width="16" height="54" rx="5" fill="#8f5650" />
-  <rect x="43" y="79" width="9" height="48" rx="4" fill="#d7caac" />
-  <rect x="68" y="79" width="9" height="48" rx="4" fill="#d7caac" />
-  <rect x="45" y="129" width="12" height="16" rx="5" fill="#57728d" />
-  <rect x="63" y="129" width="12" height="16" rx="5" fill="#57728d" />
-  <rect x="42" y="144" width="18" height="5" rx="2.5" fill="#3a3a41" />
-  <rect x="60" y="144" width="18" height="5" rx="2.5" fill="#3a3a41" />
+  <g id="body-cream-jacket">
+    <g id="jacket-top">
+      <path id="jacket-base" d="M34 79c4-7 13-10 26-10s22 3 26 10l9 24-11 6-8-18v54H44V91l-8 18-11-6 9-24Z" fill="#e8ddc4" />
+      <rect id="shirt-panel" x="52" y="76" width="16" height="54" rx="5" fill="#8f5650" />
+      <g id="lapels" fill="#d7caac">
+        <rect id="left-lapel" x="43" y="79" width="9" height="48" rx="4" />
+        <rect id="right-lapel" x="68" y="79" width="9" height="48" rx="4" />
+      </g>
+    </g>
+    <g id="legs" fill="#57728d">
+      <rect id="left-leg" x="45" y="129" width="12" height="16" rx="5" />
+      <rect id="right-leg" x="63" y="129" width="12" height="16" rx="5" />
+    </g>
+    <g id="shoes" fill="#3a3a41">
+      <rect id="left-shoe" x="42" y="144" width="18" height="5" rx="2.5" />
+      <rect id="right-shoe" x="60" y="144" width="18" height="5" rx="2.5" />
+    </g>
+  </g>
 </svg>
