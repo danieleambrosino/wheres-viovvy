@@ -15,7 +15,7 @@ app.innerHTML = `
     <aside class="panel">
       <div class="panel-copy">
         <p class="eyebrow">Clone procedurale</p>
-        <h1>Find Viovvo</h1>
+        <h1>Where's Viovvy?</h1>
         <p class="lead">
           Una scena da ${MAP_WIDTH}x${MAP_HEIGHT} pixel viene composta a runtime con un
           motore paper doll e fusa in un solo canvas statico.
@@ -38,7 +38,7 @@ app.innerHTML = `
       <div class="legend">
         <div class="target-card">
           <span class="legend-label">Bersaglio</span>
-          <img id="target-preview" alt="Anteprima del bersaglio Viovvo" />
+          <img id="target-preview" alt="Anteprima del bersaglio Viovvy" />
         </div>
 
         <div class="legend-content">
@@ -56,7 +56,7 @@ app.innerHTML = `
           <ul class="instructions">
             <li>Trascina la mappa per il pan.</li>
             <li>Usa rotella o pinch per fare zoom.</li>
-            <li>Clicca quando pensi di aver trovato Viovvo nella scena logica.</li>
+            <li>Clicca quando pensi di aver trovato Viovvy nella scena logica.</li>
           </ul>
         </div>
       </div>
@@ -75,10 +75,10 @@ app.innerHTML = `
         <div class="board-chip">panzoom</div>
       </div>
 
-      <div id="viewport" class="viewport" aria-label="Mappa giocabile di Find Viovvo">
+      <div id="viewport" class="viewport" aria-label="Mappa giocabile di Where's Viovvy?">
         <div id="scene-stage" class="scene-stage"></div>
         <div class="viewport-banner" aria-live="polite">
-          <strong>Viovvo localizzato</strong>
+          <strong>Viovvy localizzato</strong>
           <span>Rigenera la scena per una nuova composizione procedurale.</span>
         </div>
       </div>
@@ -169,12 +169,12 @@ function handleMapClick(point) {
     refs.viewport.classList.add('is-victory');
     setState(
       STATE.victory,
-      'Coordinate corrette: Viovvo era dentro il bounding box tracciato sul canvas.'
+      'Coordinate corrette: Viovvy era dentro il bounding box tracciato sul canvas.'
     );
     return;
   }
 
-  refs.statusMessage.textContent = 'Quello non era Viovvo. Continua a cercare nella folla.';
+  refs.statusMessage.textContent = 'Quello non era Viovvy. Continua a cercare nella folla.';
 }
 
 async function startRound() {
