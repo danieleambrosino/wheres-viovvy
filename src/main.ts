@@ -1,7 +1,7 @@
 import './style.css';
-import { ASSET_MANIFEST, MAP_WIDTH } from './assetsConfig.js';
-import { generateScene } from './engine.js';
-import { createInteraction } from './interaction.js';
+import { ASSET_MANIFEST, MAP_WIDTH } from './assetsConfig';
+import { generateScene, type HitRegion } from './engine';
+import { createInteraction } from './interaction';
 
 const FEEDBACK_DISPLAY_DURATION = 1400;
 const FEEDBACK_LABEL_BOTTOM_THRESHOLD = 68;
@@ -11,8 +11,8 @@ const HIT_FEEDBACK_LABELS = Object.freeze({
   error: 'Non è lei',
 });
 
-function getElement(selector) {
-  const element = document.querySelector(selector);
+function getElement<T extends Element = HTMLElement>(selector: string): T {
+  const element = document.querySelector<T>(selector);
 
   if (!element) {
     throw new Error(`Elemento DOM non trovato: ${selector}`);
@@ -22,59 +22,60 @@ function getElement(selector) {
 }
 
 const refs = {
-  regenerateButton: getElement('#regenerate-button'),
-  sceneStage: getElement('#scene-stage'),
-  statusBadge: getElement('#status-badge'),
-  statusMessage: getElement('#status-message'),
-  hitFeedbackTemplate: getElement('#hit-feedback-template'),
-  targetPreview: getElement('#target-preview'),
-  viewport: getElement('#viewport'),
+  regenerateButton: getElement<HTMLButtonElement>('#regenerate-button'),
+  sceneStage: getElement<HTMLElement>('#scene-stage'),
+  statusBadge: getElement<HTMLElement>('#status-badge'),
+  statusMessage: getElement<HTMLElement>('#status-message'),
+  hitFeedbackTemplate: getElement<HTMLTemplateElement>('#hit-feedback-template'),
+  targetPreview: getElement<HTMLImageElement>('#target-preview'),
+  viewport: getElement<HTMLElement>('#viewport'),
 };
 
 const STATE = Object.freeze({
-  loading: 'loading',
-  playing: 'playing',
-  victory: 'victory',
-  error: 'error',
+  LOADING: 'LOADING',
+  PLAYING: 'PLAYING',
+  VICTORY: 'VICTORY',
+  ERROR: 'ERROR',
 });
+type State = typeof STATE[keyof typeof STATE];
 
-const STATUS_CONTENT = Object.freeze({
-  [STATE.loading]: {
+const STATUS_CONTENT: Record<State, { badge: string; message: string }> = {
+  [STATE.LOADING]: {
     badge: 'Sto preparando la scena',
     message: 'Creo una nuova folla da esplorare.',
   },
-  [STATE.playing]: {
+  [STATE.PLAYING]: {
     badge: 'In cerca',
     message: 'Trascina, fai zoom e tocca quando pensi di aver trovato Viovvy.',
   },
-  [STATE.victory]: {
+  [STATE.VICTORY]: {
     badge: 'Hai trovato Viovvy!',
     message: 'Sì, è proprio lei!',
   },
-  [STATE.error]: {
+  [STATE.ERROR]: {
     badge: 'Errore di caricamento',
     message: 'Non riesco a caricare la scena. Prova di nuovo.',
   },
-});
+};
 
-let currentState = STATE.loading;
-let currentHitRegions = [];
-let activeFeedback = null;
-let currentInteraction = null;
+let currentState: State = STATE.LOADING;
+let currentHitRegions: HitRegion[] = [];
+let activeFeedback: HTMLElement | null = null;
+let currentInteraction: { destroy(): void } | null = null;
 let isGenerating = false;
 let feedbackCleanupTimer = 0;
 
 refs.targetPreview.src = ASSET_MANIFEST.target;
 refs.targetPreview.decoding = 'async';
 
-function setState(state, message = STATUS_CONTENT[state].message) {
+function setState(state: State, message = STATUS_CONTENT[state].message) {
   currentState = state;
   refs.statusBadge.dataset.state = state;
   refs.statusBadge.textContent = STATUS_CONTENT[state].badge;
   refs.statusMessage.textContent = message;
 }
 
-function isPointInsideBounds(point, bounds) {
+function isPointInsideBounds(point: { x: number; y: number }, bounds: { x: number; y: number; width: number; height: number }) {
   return (
     point.x >= bounds.x &&
     point.x <= bounds.x + bounds.width &&
@@ -107,17 +108,17 @@ function clearScene() {
   currentHitRegions = [];
 }
 
-function shouldPlaceLabelBelow(bounds) {
+function shouldPlaceLabelBelow(bounds: { x: number; y: number }) {
   return bounds.y < FEEDBACK_LABEL_BOTTOM_THRESHOLD;
 }
 
-function shouldAlignLabelToEnd(bounds) {
+function shouldAlignLabelToEnd(bounds: { x: number; y: number; width: number }) {
   return bounds.x + bounds.width > MAP_WIDTH - FEEDBACK_LABEL_RIGHT_MARGIN;
 }
 
-function createHitFeedback(region, variant) {
-  const feedback = refs.hitFeedbackTemplate.content.firstElementChild.cloneNode(true);
-  const labelElement = feedback.querySelector('.hit-feedback__label');
+function createHitFeedback(region: HitRegion, variant: 'success' | 'error') {
+  const feedback = refs.hitFeedbackTemplate.content.firstElementChild!.cloneNode(true) as HTMLElement;
+  const labelElement = feedback.querySelector('.hit-feedback__label') as HTMLElement;
   const { bounds } = region;
 
   feedback.hidden = false;
@@ -139,7 +140,7 @@ function createHitFeedback(region, variant) {
   return feedback;
 }
 
-function showHitFeedback(region, variant, { persist = false } = {}) {
+function showHitFeedback(region: HitRegion, variant: 'success' | 'error', { persist = false } = {}) {
   clearFeedback();
 
   const feedback = createHitFeedback(region, variant);
@@ -156,7 +157,7 @@ function showHitFeedback(region, variant, { persist = false } = {}) {
   }
 }
 
-function findTopmostHitRegion(point) {
+function findTopmostHitRegion(point: { x: number; y: number }) {
   for (let index = currentHitRegions.length - 1; index >= 0; index -= 1) {
     const region = currentHitRegions[index];
 
@@ -168,8 +169,8 @@ function findTopmostHitRegion(point) {
   return null;
 }
 
-function handleMapClick(point) {
-  if (currentState !== STATE.playing) {
+function handleMapClick(point: { x: number; y: number }) {
+  if (currentState !== STATE.PLAYING) {
     return;
   }
 
@@ -177,22 +178,22 @@ function handleMapClick(point) {
 
   if (!hitRegion) {
     clearFeedback();
-    setState(STATE.playing, 'Tocca un personaggio della folla per fare un tentativo.');
+    setState(STATE.PLAYING, 'Tocca un personaggio della folla per fare un tentativo.');
     return;
   }
 
   if (hitRegion.type === 'target') {
     showHitFeedback(hitRegion, 'success', { persist: true });
     refs.viewport.classList.add('is-victory');
-    setState(STATE.victory, 'Sì, è proprio lei! Se vuoi, genera una nuova scena.');
+    setState(STATE.VICTORY, 'Sì, è proprio lei! Se vuoi, genera una nuova scena.');
     return;
   }
 
   showHitFeedback(hitRegion, 'error');
-  setState(STATE.playing, 'Questa non è Viovvy. Continua a cercarla.');
+  setState(STATE.PLAYING, 'Questa non è Viovvy. Continua a cercarla.');
 }
 
-async function startRound() {
+async function startRound(): Promise<void> {
   if (isGenerating) {
     return;
   }
@@ -200,7 +201,7 @@ async function startRound() {
   isGenerating = true;
   refs.regenerateButton.disabled = true;
   clearScene();
-  setState(STATE.loading, 'Sto preparando una nuova folla.');
+  setState(STATE.LOADING, 'Sto preparando una nuova folla.');
 
   try {
     const { canvas, hitRegions } = await generateScene();
@@ -216,16 +217,16 @@ async function startRound() {
       onMapClick: handleMapClick,
     });
 
-    setState(STATE.playing);
+    setState(STATE.PLAYING);
   } catch (error) {
     console.error(error);
-    setState(STATE.error);
+    setState(STATE.ERROR, 'Non riesco a caricare la scena. Prova di nuovo.');
   } finally {
     refs.regenerateButton.disabled = false;
     isGenerating = false;
   }
 }
 
-refs.regenerateButton.addEventListener('click', startRound);
+refs.regenerateButton.addEventListener('click', () => void startRound());
 
 startRound();

@@ -1,10 +1,16 @@
 import panzoom from 'panzoom';
 
-import { MAP_HEIGHT, MAP_WIDTH } from './assetsConfig.js';
+import { MAP_HEIGHT, MAP_WIDTH } from './assetsConfig';
 
 const DRAG_THRESHOLD = 8;
 
-function fitStageToViewport(stage, viewport, instance) {
+type PanzoomInstance = {
+  zoomAbs(x: number, y: number, scale: number): void;
+  moveTo(x: number, y: number): void;
+  dispose(): void;
+};
+
+function fitStageToViewport(stage: HTMLElement, viewport: HTMLElement, instance: PanzoomInstance) {
   const { width, height } = viewport.getBoundingClientRect();
 
   if (!width || !height) {
@@ -20,7 +26,7 @@ function fitStageToViewport(stage, viewport, instance) {
   stage.style.transformOrigin = '0 0';
 }
 
-function normalizeClickPosition(event, canvas) {
+function normalizeClickPosition(event: PointerEvent, canvas: HTMLCanvasElement) {
   const rect = canvas.getBoundingClientRect();
 
   return {
@@ -29,7 +35,17 @@ function normalizeClickPosition(event, canvas) {
   };
 }
 
-export function createInteraction({ viewport, stage, canvas, onMapClick }) {
+export function createInteraction({
+  viewport,
+  stage,
+  canvas,
+  onMapClick,
+}: {
+  viewport: HTMLElement;
+  stage: HTMLElement;
+  canvas: HTMLCanvasElement;
+  onMapClick: (point: { x: number; y: number }) => void;
+}) {
   const instance = panzoom(stage, {
     bounds: true,
     boundsPadding: 0.12,
@@ -37,18 +53,18 @@ export function createInteraction({ viewport, stage, canvas, onMapClick }) {
     minZoom: 0.14,
     smoothScroll: false,
     zoomDoubleClickSpeed: 1,
-  });
+  }) as unknown as PanzoomInstance;
 
-  let pointerOrigin = null;
+  let pointerOrigin: { x: number; y: number } | null = null;
   let dragged = false;
 
-  const handlePointerDown = (event) => {
+  const handlePointerDown = (event: PointerEvent) => {
     pointerOrigin = { x: event.clientX, y: event.clientY };
     dragged = false;
     stage.classList.add('is-dragging');
   };
 
-  const handlePointerMove = (event) => {
+  const handlePointerMove = (event: PointerEvent) => {
     if (!pointerOrigin) {
       return;
     }
@@ -66,13 +82,13 @@ export function createInteraction({ viewport, stage, canvas, onMapClick }) {
     stage.classList.remove('is-dragging');
   };
 
-  const handleClick = (event) => {
+  const handleClick = (event: MouseEvent) => {
     if (dragged) {
       dragged = false;
       return;
     }
 
-    onMapClick(normalizeClickPosition(event, canvas));
+    onMapClick(normalizeClickPosition(event as unknown as PointerEvent, canvas));
   };
 
   viewport.addEventListener('pointerdown', handlePointerDown, { passive: true });

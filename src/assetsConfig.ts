@@ -11,6 +11,17 @@ export const PAPER_DOLL_LAYERS = Object.freeze([
   'faceAccessories',
   'headwear',
 ]);
+export type PaperDollLayer = typeof PAPER_DOLL_LAYERS[number];
+
+export interface AssetManifest {
+  background: string;
+  target: string;
+  bodies: string[];
+  heads: string[];
+  hairs: string[];
+  faceAccessories: string[];
+  headwear: string[];
+}
 
 export const ASSET_MANIFEST = Object.freeze({
   background: '/assets/background_square.svg',
@@ -21,25 +32,13 @@ export const ASSET_MANIFEST = Object.freeze({
     '/assets/body_orange_cardigan.svg',
     '/assets/body_cream_jacket.svg',
   ],
-  heads: [
-    '/assets/head_fair.svg',
-    '/assets/head_olive.svg',
-    '/assets/head_deep.svg',
-  ],
+  heads: ['/assets/head_fair.svg', '/assets/head_olive.svg', '/assets/head_deep.svg'],
   hairs: [
     '/assets/hair_black_wave.svg',
     '/assets/hair_brown_curl.svg',
     '/assets/hair_blonde_bob.svg',
     '/assets/hair_silver_buzz.svg',
   ],
-  faceAccessories: [
-    '/assets/none.svg',
-    '/assets/accessory_round_glasses.svg',
-    '/assets/accessory_beard.svg',
-  ],
-  headwear: [
-    '/assets/none.svg',
-    '/assets/headwear_red_beanie.svg',
-    '/assets/headwear_teal_cap.svg',
-  ],
-});
+  faceAccessories: ['/assets/none.svg', '/assets/accessory_round_glasses.svg', '/assets/accessory_beard.svg'],
+  headwear: ['/assets/none.svg', '/assets/headwear_red_beanie.svg', '/assets/headwear_teal_cap.svg'],
+} as AssetManifest);
