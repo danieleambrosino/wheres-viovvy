@@ -18,21 +18,35 @@ export interface AssetManifest {
 }
 
 export const ASSET_MANIFEST: AssetManifest = {
-  background: '/assets/background_square.svg',
-  target: '/assets/viovvy_classic.svg',
+  // Use Vite's BASE URL so paths work when deployed under a subpath
+  // (e.g. GitHub Pages). import.meta.env.BASE_URL is injected by Vite.
+  background: `${import.meta.env.BASE_URL}assets/background_square.svg`,
+  target: `${import.meta.env.BASE_URL}assets/viovvy_classic.svg`,
   bodies: [
-    '/assets/body_blue_overall.svg',
-    '/assets/body_green_hoodie.svg',
-    '/assets/body_orange_cardigan.svg',
-    '/assets/body_cream_jacket.svg',
+    `${import.meta.env.BASE_URL}assets/body_blue_overall.svg`,
+    `${import.meta.env.BASE_URL}assets/body_green_hoodie.svg`,
+    `${import.meta.env.BASE_URL}assets/body_orange_cardigan.svg`,
+    `${import.meta.env.BASE_URL}assets/body_cream_jacket.svg`,
   ],
-  heads: ['/assets/head_fair.svg', '/assets/head_olive.svg', '/assets/head_deep.svg'],
+  heads: [
+    `${import.meta.env.BASE_URL}assets/head_fair.svg`,
+    `${import.meta.env.BASE_URL}assets/head_olive.svg`,
+    `${import.meta.env.BASE_URL}assets/head_deep.svg`,
+  ],
   hairs: [
-    '/assets/hair_black_wave.svg',
-    '/assets/hair_brown_curl.svg',
-    '/assets/hair_blonde_bob.svg',
-    '/assets/hair_silver_buzz.svg',
+    `${import.meta.env.BASE_URL}assets/hair_black_wave.svg`,
+    `${import.meta.env.BASE_URL}assets/hair_brown_curl.svg`,
+    `${import.meta.env.BASE_URL}assets/hair_blonde_bob.svg`,
+    `${import.meta.env.BASE_URL}assets/hair_silver_buzz.svg`,
   ],
-  faceAccessories: ['/assets/none.svg', '/assets/accessory_round_glasses.svg', '/assets/accessory_beard.svg'],
-  headwear: ['/assets/none.svg', '/assets/headwear_red_beanie.svg', '/assets/headwear_teal_cap.svg'],
+  faceAccessories: [
+    `${import.meta.env.BASE_URL}assets/none.svg`,
+    `${import.meta.env.BASE_URL}assets/accessory_round_glasses.svg`,
+    `${import.meta.env.BASE_URL}assets/accessory_beard.svg`,
+  ],
+  headwear: [
+    `${import.meta.env.BASE_URL}assets/none.svg`,
+    `${import.meta.env.BASE_URL}assets/headwear_red_beanie.svg`,
+    `${import.meta.env.BASE_URL}assets/headwear_teal_cap.svg`,
+  ],
 };
