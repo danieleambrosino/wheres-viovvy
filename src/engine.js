@@ -9,6 +9,8 @@ import {
 } from './assetsConfig.js';
 
 let loadedAssetsPromise;
+const MAX_DISTRACTOR_PLACEMENT_ATTEMPTS = 60;
+const MAX_DISTRACTOR_GENERATION_ROLLS = DISTRACTOR_COUNT * 3;
 
 function loadImage(source) {
   return new Promise((resolve, reject) => {
@@ -69,20 +71,20 @@ function isDistractorPlacementValid(bounds, targetBounds, targetHotspot) {
 
 function createDistractor(assets, targetBounds) {
   const targetHotspot = createTargetHotspot(targetBounds);
-  let bounds = randomBounds();
-  let attempts = 0;
+  for (let attempts = 0; attempts < MAX_DISTRACTOR_PLACEMENT_ATTEMPTS; attempts += 1) {
+    const bounds = randomBounds();
 
-  while (attempts < 60 && !isDistractorPlacementValid(bounds, targetBounds, targetHotspot)) {
-    bounds = randomBounds();
-    attempts += 1;
+    if (isDistractorPlacementValid(bounds, targetBounds, targetHotspot)) {
+      return {
+        bounds,
+        parts: Object.fromEntries(
+          PAPER_DOLL_LAYERS.map((layer) => [layer, randomChoice(assets.paperDoll[layer])])
+        ),
+      };
+    }
   }
 
-  return {
-    bounds,
-    parts: Object.fromEntries(
-      PAPER_DOLL_LAYERS.map((layer) => [layer, randomChoice(assets.paperDoll[layer])])
-    ),
-  };
+  return null;
 }
 
 function drawPaperDoll(context, distractor) {
@@ -95,6 +97,38 @@ function drawPaperDoll(context, distractor) {
       distractor.bounds.height
     );
   }
+}
+
+function createHitRegion(type, bounds) {
+  return {
+    type,
+    bounds: { ...bounds },
+  };
+}
+
+function drawDistractors(context, distractors, hitRegions) {
+  distractors.forEach((distractor) => {
+    drawPaperDoll(context, distractor);
+    hitRegions.push(createHitRegion('distractor', distractor.bounds));
+  });
+}
+
+function createDistractors(assets, targetBounds) {
+  const distractors = [];
+
+  for (let roll = 0; roll < MAX_DISTRACTOR_GENERATION_ROLLS; roll += 1) {
+    const distractor = createDistractor(assets, targetBounds);
+
+    if (distractor) {
+      distractors.push(distractor);
+    }
+
+    if (distractors.length === DISTRACTOR_COUNT) {
+      break;
+    }
+  }
+
+  return distractors;
 }
 
 async function loadAssets() {
@@ -141,14 +175,15 @@ export async function generateScene() {
   context.drawImage(assets.background, 0, 0, MAP_WIDTH, MAP_HEIGHT);
 
   const targetBounds = randomBounds();
-  const distractors = Array.from({ length: DISTRACTOR_COUNT }, () =>
-    createDistractor(assets, targetBounds)
-  ).sort((left, right) => left.bounds.y - right.bounds.y);
+  const distractors = createDistractors(assets, targetBounds).sort(
+    (left, right) => left.bounds.y - right.bounds.y
+  );
   const splitIndex = Math.floor(distractors.length / 2);
+  const backgroundDistractors = distractors.slice(0, splitIndex);
+  const foregroundDistractors = distractors.slice(splitIndex);
+  const hitRegions = [];
 
-  distractors.slice(0, splitIndex).forEach((distractor) => {
-    drawPaperDoll(context, distractor);
-  });
+  drawDistractors(context, backgroundDistractors, hitRegions);
 
   context.drawImage(
     assets.target,
@@ -157,10 +192,9 @@ export async function generateScene() {
     targetBounds.width,
     targetBounds.height
   );
+  hitRegions.push(createHitRegion('target', targetBounds));
 
-  distractors.slice(splitIndex).forEach((distractor) => {
-    drawPaperDoll(context, distractor);
-  });
+  drawDistractors(context, foregroundDistractors, hitRegions);
 
-  return { canvas, targetBounds };
+  return { canvas, hitRegions };
 }
