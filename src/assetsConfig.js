@@ -2,7 +2,7 @@ export const MAP_WIDTH = 2400;
 export const MAP_HEIGHT = 2400;
 export const SPRITE_WIDTH = 120;
 export const SPRITE_HEIGHT = 150;
-export const DISTRACTOR_COUNT = 150;
+export const DISTRACTOR_COUNT = 350;
 
 export const PAPER_DOLL_LAYERS = Object.freeze([
   'bodies',
