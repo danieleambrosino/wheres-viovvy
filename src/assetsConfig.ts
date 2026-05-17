@@ -4,13 +4,7 @@ export const SPRITE_WIDTH = 120;
 export const SPRITE_HEIGHT = 150;
 export const DISTRACTOR_COUNT = 350;
 
-export const PAPER_DOLL_LAYERS = Object.freeze([
-  'bodies',
-  'heads',
-  'hairs',
-  'faceAccessories',
-  'headwear',
-]);
+export const PAPER_DOLL_LAYERS = ['bodies', 'heads', 'hairs', 'faceAccessories', 'headwear'] as const;
 export type PaperDollLayer = typeof PAPER_DOLL_LAYERS[number];
 
 export interface AssetManifest {
@@ -23,7 +17,7 @@ export interface AssetManifest {
   headwear: string[];
 }
 
-export const ASSET_MANIFEST = Object.freeze({
+export const ASSET_MANIFEST: AssetManifest = {
   background: '/assets/background_square.svg',
   target: '/assets/viovvy_classic.svg',
   bodies: [
@@ -41,4 +35,4 @@ export const ASSET_MANIFEST = Object.freeze({
   ],
   faceAccessories: ['/assets/none.svg', '/assets/accessory_round_glasses.svg', '/assets/accessory_beard.svg'],
   headwear: ['/assets/none.svg', '/assets/headwear_red_beanie.svg', '/assets/headwear_teal_cap.svg'],
-} as AssetManifest);
+};

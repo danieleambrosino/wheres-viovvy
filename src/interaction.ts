@@ -1,14 +1,8 @@
-import panzoom from 'panzoom';
+import panzoom, { type PanzoomInstance } from 'panzoom';
 
 import { MAP_HEIGHT, MAP_WIDTH } from './assetsConfig';
 
 const DRAG_THRESHOLD = 8;
-
-type PanzoomInstance = {
-  zoomAbs(x: number, y: number, scale: number): void;
-  moveTo(x: number, y: number): void;
-  dispose(): void;
-};
 
 function fitStageToViewport(stage: HTMLElement, viewport: HTMLElement, instance: PanzoomInstance) {
   const { width, height } = viewport.getBoundingClientRect();
@@ -26,7 +20,7 @@ function fitStageToViewport(stage: HTMLElement, viewport: HTMLElement, instance:
   stage.style.transformOrigin = '0 0';
 }
 
-function normalizeClickPosition(event: PointerEvent, canvas: HTMLCanvasElement) {
+function normalizeClickPosition(event: PointerEvent | MouseEvent, canvas: HTMLCanvasElement) {
   const rect = canvas.getBoundingClientRect();
 
   return {
@@ -53,7 +47,7 @@ export function createInteraction({
     minZoom: 0.14,
     smoothScroll: false,
     zoomDoubleClickSpeed: 1,
-  }) as unknown as PanzoomInstance;
+  });
 
   let pointerOrigin: { x: number; y: number } | null = null;
   let dragged = false;

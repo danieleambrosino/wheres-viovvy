@@ -6,10 +6,10 @@ import {
   PAPER_DOLL_LAYERS,
   SPRITE_HEIGHT,
   SPRITE_WIDTH,
+  type PaperDollLayer,
 } from './assetsConfig';
 
 interface Bounds { x: number; y: number; width: number; height: number };
-type PaperDollLayer = typeof PAPER_DOLL_LAYERS[number];
 
 interface LoadedAssets {
   background: HTMLImageElement;
@@ -22,17 +22,9 @@ interface Distractor {
   parts: Record<PaperDollLayer, HTMLImageElement>;
 }
 
-const HIT_REGION_TYPE = Object.freeze({
-  DISTRACTOR: 'distractor',
-  TARGET: 'target',
-});
-type HitRegionType = typeof HIT_REGION_TYPE[keyof typeof HIT_REGION_TYPE];
-interface HitRegion {
-  type: HitRegionType;
-  bounds: Bounds;
-}
+export type HitRegion = { type: 'distractor' | 'target'; bounds: Bounds };
 
-let loadedAssetsPromise: Promise<LoadedAssets> | null = null;
+let loadedAssetsPromise: Promise<LoadedAssets> | undefined;
 const MAX_DISTRACTOR_PLACEMENT_ATTEMPTS = 60;
 const MAX_DISTRACTOR_GENERATION_ROLLS = DISTRACTOR_COUNT * 3;
 
@@ -120,7 +112,7 @@ function drawPaperDoll(context: CanvasRenderingContext2D, distractor: Distractor
   }
 }
 
-function createHitRegion(type: HitRegionType, bounds: Bounds): HitRegion {
+function createHitRegion(type: HitRegion['type'], bounds: Bounds): HitRegion {
   return {
     type,
     bounds: { ...bounds },
@@ -130,7 +122,7 @@ function createHitRegion(type: HitRegionType, bounds: Bounds): HitRegion {
 function drawDistractors(context: CanvasRenderingContext2D, distractors: Distractor[], hitRegions: HitRegion[]) {
   distractors.forEach((distractor) => {
     drawPaperDoll(context, distractor);
-    hitRegions.push(createHitRegion(HIT_REGION_TYPE.DISTRACTOR, distractor.bounds));
+    hitRegions.push(createHitRegion('distractor', distractor.bounds));
   });
 }
 
@@ -213,7 +205,7 @@ export async function generateScene(): Promise<{ canvas: HTMLCanvasElement; hitR
     targetBounds.width,
     targetBounds.height
   );
-  hitRegions.push(createHitRegion(HIT_REGION_TYPE.TARGET, targetBounds));
+  hitRegions.push(createHitRegion('target', targetBounds));
 
   drawDistractors(context, foregroundDistractors, hitRegions);
 

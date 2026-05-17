@@ -6,10 +6,10 @@ import { createInteraction } from './interaction';
 const FEEDBACK_DISPLAY_DURATION = 1400;
 const FEEDBACK_LABEL_BOTTOM_THRESHOLD = 68;
 const FEEDBACK_LABEL_RIGHT_MARGIN = 200;
-const HIT_FEEDBACK_LABELS = Object.freeze({
+const HIT_FEEDBACK_LABELS = {
   success: 'Hai trovato Viovvy!',
   error: 'Non è lei',
-});
+} as const;
 
 function getElement<T extends Element = HTMLElement>(selector: string): T {
   const element = document.querySelector<T>(selector);
@@ -31,34 +31,34 @@ const refs = {
   viewport: getElement<HTMLElement>('#viewport'),
 };
 
-const STATE = Object.freeze({
-  LOADING: 'LOADING',
-  PLAYING: 'PLAYING',
-  VICTORY: 'VICTORY',
-  ERROR: 'ERROR',
-});
+const STATE = {
+  loading: 'loading',
+  playing: 'playing',
+  victory: 'victory',
+  error: 'error',
+} as const;
 type State = typeof STATE[keyof typeof STATE];
 
 const STATUS_CONTENT: Record<State, { badge: string; message: string }> = {
-  [STATE.LOADING]: {
+  [STATE.loading]: {
     badge: 'Sto preparando la scena',
     message: 'Creo una nuova folla da esplorare.',
   },
-  [STATE.PLAYING]: {
+  [STATE.playing]: {
     badge: 'In cerca',
     message: 'Trascina, fai zoom e tocca quando pensi di aver trovato Viovvy.',
   },
-  [STATE.VICTORY]: {
+  [STATE.victory]: {
     badge: 'Hai trovato Viovvy!',
     message: 'Sì, è proprio lei!',
   },
-  [STATE.ERROR]: {
+  [STATE.error]: {
     badge: 'Errore di caricamento',
     message: 'Non riesco a caricare la scena. Prova di nuovo.',
   },
 };
 
-let currentState: State = STATE.LOADING;
+let currentState: State = STATE.loading;
 let currentHitRegions: HitRegion[] = [];
 let activeFeedback: HTMLElement | null = null;
 let currentInteraction: { destroy(): void } | null = null;
@@ -170,7 +170,7 @@ function findTopmostHitRegion(point: { x: number; y: number }) {
 }
 
 function handleMapClick(point: { x: number; y: number }) {
-  if (currentState !== STATE.PLAYING) {
+  if (currentState !== STATE.playing) {
     return;
   }
 
@@ -178,19 +178,19 @@ function handleMapClick(point: { x: number; y: number }) {
 
   if (!hitRegion) {
     clearFeedback();
-    setState(STATE.PLAYING, 'Tocca un personaggio della folla per fare un tentativo.');
+    setState(STATE.playing, 'Tocca un personaggio della folla per fare un tentativo.');
     return;
   }
 
   if (hitRegion.type === 'target') {
     showHitFeedback(hitRegion, 'success', { persist: true });
     refs.viewport.classList.add('is-victory');
-    setState(STATE.VICTORY, 'Sì, è proprio lei! Se vuoi, genera una nuova scena.');
+    setState(STATE.victory, 'Sì, è proprio lei! Se vuoi, genera una nuova scena.');
     return;
   }
 
   showHitFeedback(hitRegion, 'error');
-  setState(STATE.PLAYING, 'Questa non è Viovvy. Continua a cercarla.');
+  setState(STATE.playing, 'Questa non è Viovvy. Continua a cercarla.');
 }
 
 async function startRound(): Promise<void> {
@@ -201,7 +201,7 @@ async function startRound(): Promise<void> {
   isGenerating = true;
   refs.regenerateButton.disabled = true;
   clearScene();
-  setState(STATE.LOADING, 'Sto preparando una nuova folla.');
+  setState(STATE.loading, 'Sto preparando una nuova folla.');
 
   try {
     const { canvas, hitRegions } = await generateScene();
@@ -217,10 +217,10 @@ async function startRound(): Promise<void> {
       onMapClick: handleMapClick,
     });
 
-    setState(STATE.PLAYING);
+    setState(STATE.playing);
   } catch (error) {
     console.error(error);
-    setState(STATE.ERROR, 'Non riesco a caricare la scena. Prova di nuovo.');
+    setState(STATE.error, 'Non riesco a caricare la scena. Prova di nuovo.');
   } finally {
     refs.regenerateButton.disabled = false;
     isGenerating = false;
