@@ -1,98 +1,26 @@
 import './style.css';
-import {
-  ASSET_MANIFEST,
-  DISTRACTOR_COUNT,
-  MAP_HEIGHT,
-  MAP_WIDTH,
-} from './assetsConfig.js';
+import { ASSET_MANIFEST } from './assetsConfig.js';
 import { generateScene } from './engine.js';
 import { createInteraction } from './interaction.js';
 
-const app = document.querySelector('#app');
+function getElement(selector) {
+  const element = document.querySelector(selector);
 
-app.innerHTML = `
-  <div class="shell">
-    <aside class="panel">
-      <div class="panel-copy">
-        <p class="eyebrow">Clone procedurale</p>
-        <h1>Where's Viovvy?</h1>
-        <p class="lead">
-          Una scena da ${MAP_WIDTH}x${MAP_HEIGHT} pixel viene composta a runtime con un
-          motore paper doll e fusa in un solo canvas statico.
-        </p>
-      </div>
+  if (!element) {
+    throw new Error(`Elemento DOM non trovato: ${selector}`);
+  }
 
-      <div class="status-card">
-        <span id="status-badge" class="status-badge" data-state="loading">Generazione scena</span>
-        <p id="status-message" class="message">
-          Caricamento asset e composizione della mappa off-screen.
-        </p>
-      </div>
-
-      <div class="controls">
-        <button id="regenerate-button" class="primary-button" type="button">
-          Rigenera la scena
-        </button>
-      </div>
-
-      <div class="legend">
-        <div class="target-card">
-          <span class="legend-label">Bersaglio</span>
-          <img id="target-preview" alt="Anteprima del bersaglio Viovvy" />
-        </div>
-
-        <div class="legend-content">
-          <div class="stat-row">
-            <div class="stat">
-              <span>Canvas logico</span>
-              <strong>${MAP_WIDTH}x${MAP_HEIGHT}</strong>
-            </div>
-            <div class="stat">
-              <span>Distrattori</span>
-              <strong>${DISTRACTOR_COUNT}</strong>
-            </div>
-          </div>
-
-          <ul class="instructions">
-            <li>Trascina la mappa per il pan.</li>
-            <li>Usa rotella o pinch per fare zoom.</li>
-            <li>Clicca quando pensi di aver trovato Viovvy nella scena logica.</li>
-          </ul>
-        </div>
-      </div>
-    </aside>
-
-    <section class="board">
-      <div class="board-header">
-        <div>
-          <p class="eyebrow">Viewport</p>
-          <h2 class="board-title">Canvas statico, navigazione GPU-driven</h2>
-          <p class="board-copy">
-            Pan e zoom agiscono via trasformazioni CSS sul contenitore del canvas,
-            senza redraw continuo della folla.
-          </p>
-        </div>
-        <div class="board-chip">panzoom</div>
-      </div>
-
-      <div id="viewport" class="viewport" aria-label="Mappa giocabile di Where's Viovvy?">
-        <div id="scene-stage" class="scene-stage"></div>
-        <div class="viewport-banner" aria-live="polite">
-          <strong>Viovvy localizzato</strong>
-          <span>Rigenera la scena per una nuova composizione procedurale.</span>
-        </div>
-      </div>
-    </section>
-  </div>
-`;
+  return element;
+}
 
 const refs = {
-  regenerateButton: document.querySelector('#regenerate-button'),
-  sceneStage: document.querySelector('#scene-stage'),
-  statusBadge: document.querySelector('#status-badge'),
-  statusMessage: document.querySelector('#status-message'),
-  targetPreview: document.querySelector('#target-preview'),
-  viewport: document.querySelector('#viewport'),
+  regenerateButton: getElement('#regenerate-button'),
+  sceneStage: getElement('#scene-stage'),
+  statusBadge: getElement('#status-badge'),
+  statusMessage: getElement('#status-message'),
+  targetMarkerTemplate: getElement('#target-marker-template'),
+  targetPreview: getElement('#target-preview'),
+  viewport: getElement('#viewport'),
 };
 
 const STATE = Object.freeze({
@@ -102,11 +30,23 @@ const STATE = Object.freeze({
   error: 'error',
 });
 
-const LABELS = Object.freeze({
-  [STATE.loading]: 'Generazione scena',
-  [STATE.playing]: 'Partita in corso',
-  [STATE.victory]: 'Bersaglio trovato',
-  [STATE.error]: 'Errore',
+const STATUS_CONTENT = Object.freeze({
+  [STATE.loading]: {
+    badge: 'Sto preparando la scena',
+    message: 'Ancora un attimo e puoi iniziare a cercare.',
+  },
+  [STATE.playing]: {
+    badge: 'Inizia a cercare',
+    message: 'Muoviti sulla mappa e clicca appena pensi di aver visto Viovvy.',
+  },
+  [STATE.victory]: {
+    badge: 'Trovato',
+    message: 'Giusto. Era proprio Viovvy.',
+  },
+  [STATE.error]: {
+    badge: 'Riprova',
+    message: 'Non riesco a caricare la scena. Prova di nuovo.',
+  },
 });
 
 let currentState = STATE.loading;
@@ -116,11 +56,12 @@ let currentInteraction = null;
 let isGenerating = false;
 
 refs.targetPreview.src = ASSET_MANIFEST.target;
+refs.targetPreview.decoding = 'async';
 
-function setState(state, message) {
+function setState(state, message = STATUS_CONTENT[state].message) {
   currentState = state;
   refs.statusBadge.dataset.state = state;
-  refs.statusBadge.textContent = LABELS[state];
+  refs.statusBadge.textContent = STATUS_CONTENT[state].badge;
   refs.statusMessage.textContent = message;
 }
 
@@ -146,9 +87,7 @@ function clearScene() {
 }
 
 function createTargetMarker(bounds) {
-  const marker = document.createElement('div');
-  marker.className = 'target-marker';
-  marker.hidden = true;
+  const marker = refs.targetMarkerTemplate.content.firstElementChild.cloneNode(true);
   marker.style.left = `${bounds.x}px`;
   marker.style.top = `${bounds.y}px`;
   marker.style.width = `${bounds.width}px`;
@@ -167,14 +106,11 @@ function handleMapClick(point) {
     }
 
     refs.viewport.classList.add('is-victory');
-    setState(
-      STATE.victory,
-      'Coordinate corrette: Viovvy era dentro il bounding box tracciato sul canvas.'
-    );
+    setState(STATE.victory);
     return;
   }
 
-  refs.statusMessage.textContent = 'Quello non era Viovvy. Continua a cercare nella folla.';
+  setState(STATE.playing, 'No, continua a cercare.');
 }
 
 async function startRound() {
@@ -185,7 +121,7 @@ async function startRound() {
   isGenerating = true;
   refs.regenerateButton.disabled = true;
   clearScene();
-  setState(STATE.loading, 'Assemblaggio dello sfondo, del bersaglio e dei distrattori.');
+  setState(STATE.loading, 'Sto preparando una nuova folla.');
 
   try {
     const { canvas, targetBounds } = await generateScene();
@@ -202,24 +138,16 @@ async function startRound() {
       onMapClick: handleMapClick,
     });
 
-    setState(
-      STATE.playing,
-      'La scena e pronta. Pan e zoom sono attivi: clicca appena pensi di averlo individuato.'
-    );
+    setState(STATE.playing);
   } catch (error) {
     console.error(error);
-    setState(
-      STATE.error,
-      'Generazione fallita. Verifica il manifest degli asset o la leggibilita dei file in public/assets.'
-    );
+    setState(STATE.error);
   } finally {
     refs.regenerateButton.disabled = false;
     isGenerating = false;
   }
 }
 
-refs.regenerateButton.addEventListener('click', () => {
-  startRound();
-});
+refs.regenerateButton.addEventListener('click', startRound);
 
 startRound();

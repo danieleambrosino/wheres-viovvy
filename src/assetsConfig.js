@@ -14,7 +14,7 @@ export const PAPER_DOLL_LAYERS = Object.freeze([
 
 export const ASSET_MANIFEST = Object.freeze({
   background: '/assets/background_square.svg',
-  target: '/assets/viovvo_classic.svg',
+  target: '/assets/viovvy_classic.svg',
   bodies: [
     '/assets/body_blue_overall.svg',
     '/assets/body_green_hoodie.svg',

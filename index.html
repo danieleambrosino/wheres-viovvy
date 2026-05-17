@@ -6,12 +6,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Where's Viovvy?: clone procedurale client-side di un gioco alla Dov'e Waldo, costruito con Vite, canvas e panzoom."
+      content="Where's Viovvy? Cerca Viovvy nella folla, spostati sulla mappa e clicca appena lo trovi."
     />
     <title>Where's Viovvy?</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app" class="app-shell">
+      <aside class="app-sidebar">
+        <p class="app-badge">Where's Viovvy?</p>
+        <div class="app-copy">
+          <h1 class="app-title">Trovalo nella folla.</h1>
+          <p class="app-intro">
+            Una pausa breve dalle cose serie: spostati sulla mappa, zooma e clicca
+            appena pensi di aver visto Viovvy.
+          </p>
+        </div>
+
+        <section class="target-card" aria-labelledby="target-card-title">
+          <div class="target-card__copy">
+            <span class="target-card__label">Stai cercando lui</span>
+            <p id="target-card-title" class="target-card__name">Viovvy</p>
+          </div>
+          <div class="target-preview-frame">
+            <img id="target-preview" alt="Anteprima di Viovvy" />
+          </div>
+        </section>
+
+        <section class="status-card" aria-live="polite">
+          <span id="status-badge" class="status-badge" data-state="loading">
+            Sto preparando la scena
+          </span>
+          <p id="status-message" class="status-message">
+            Ancora un attimo e puoi iniziare a cercare.
+          </p>
+        </section>
+
+        <div class="sidebar-actions">
+          <button id="regenerate-button" class="primary-button" type="button">
+            Nuova scena
+          </button>
+        </div>
+
+        <ul class="play-tips" aria-label="Come si gioca">
+          <li>Trascina per spostarti.</li>
+          <li>Usa la rotella per avvicinarti.</li>
+          <li>Clicca appena pensi di aver visto Viovvy.</li>
+        </ul>
+      </aside>
+
+      <main class="play-stage">
+        <header class="play-stage__header">
+          <div>
+            <p class="play-stage__eyebrow">Partita in corso</p>
+            <h2 class="play-stage__title">Se lo vedi, cliccalo.</h2>
+          </div>
+        </header>
+
+        <section id="viewport" class="viewport" aria-label="Mappa di gioco di Where's Viovvy?">
+          <div class="viewport-hint">Cerca bene. Non vale tirare a indovinare.</div>
+          <div id="scene-stage" class="scene-stage"></div>
+
+          <div class="viewport-banner" aria-live="polite">
+            <strong>Trovato.</strong>
+            <span>Era davvero lui. Se vuoi, rigenera e riparti.</span>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <template id="target-marker-template">
+      <div class="target-marker" hidden></div>
+    </template>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
