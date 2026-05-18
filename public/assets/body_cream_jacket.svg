@@ -1,9 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="150" viewBox="0 0 120 150">
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="120"
+  height="150"
+  viewBox="0 0 120 150"
+>
   <rect width="120" height="150" fill="none" />
   <g id="body-cream-jacket">
     <g id="jacket-top">
-      <path id="jacket-base" d="M34 79c4-7 13-10 26-10s22 3 26 10l9 24-11 6-8-18v54H44V91l-8 18-11-6 9-24Z" fill="#e8ddc4" />
-      <rect id="shirt-panel" x="52" y="76" width="16" height="54" rx="5" fill="#8f5650" />
+      <path
+        id="jacket-base"
+        d="M34 79c4-7 13-10 26-10s22 3 26 10l9 24-11 6-8-18v54H44V91l-8 18-11-6 9-24Z"
+        fill="#e8ddc4"
+      />
+      <rect
+        id="shirt-panel"
+        x="52"
+        y="76"
+        width="16"
+        height="54"
+        rx="5"
+        fill="#8f5650"
+      />
       <g id="lapels" fill="#d7caac">
         <rect id="left-lapel" x="43" y="79" width="9" height="48" rx="4" />
         <rect id="right-lapel" x="68" y="79" width="9" height="48" rx="4" />

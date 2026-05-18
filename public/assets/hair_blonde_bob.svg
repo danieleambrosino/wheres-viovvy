@@ -1,7 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="150" viewBox="0 0 120 150">
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="120"
+  height="150"
+  viewBox="0 0 120 150"
+>
   <rect width="120" height="150" fill="none" />
   <g id="hair-blonde-bob">
-    <path id="hair-base" d="M34 43c0-18 11-30 27-30 17 0 28 11 28 28 0 11-4 20-12 28l-7-9-10 2-10-2-6 9c-7-7-10-16-10-26Z" fill="#e3ba53" />
+    <path
+      id="hair-base"
+      d="M34 43c0-18 11-30 27-30 17 0 28 11 28 28 0 11-4 20-12 28l-7-9-10 2-10-2-6 9c-7-7-10-16-10-26Z"
+      fill="#e3ba53"
+    />
     <g id="side-locks" fill="#e3ba53">
       <rect id="left-lock" x="34" y="40" width="10" height="26" rx="5" />
       <rect id="right-lock" x="76" y="40" width="10" height="26" rx="5" />

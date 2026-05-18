@@ -4,7 +4,13 @@ export const SPRITE_WIDTH = 120;
 export const SPRITE_HEIGHT = 150;
 export const DISTRACTOR_COUNT = 350;
 
-export const PAPER_DOLL_LAYERS = ['bodies', 'heads', 'hairs', 'faceAccessories', 'headwear'] as const;
+export const PAPER_DOLL_LAYERS = [
+  "bodies",
+  "heads",
+  "hairs",
+  "faceAccessories",
+  "headwear",
+] as const;
 export type PaperDollLayer = typeof PAPER_DOLL_LAYERS[number];
 
 export interface AssetManifest {

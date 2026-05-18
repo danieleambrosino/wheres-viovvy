@@ -1,7 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="150" viewBox="0 0 120 150">
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="120"
+  height="150"
+  viewBox="0 0 120 150"
+>
   <rect width="120" height="150" fill="none" />
   <g id="headwear-teal-cap">
-    <path id="cap-crown" d="M40 31c0-10 9-18 20-18 13 0 22 9 22 22v5H40v-9Z" fill="#2d7f84" />
-    <path id="cap-brim" d="M52 37h36c-2 7-9 11-18 11H52c-4 0-7-2-7-5s3-6 7-6Z" fill="#215e61" />
+    <path
+      id="cap-crown"
+      d="M40 31c0-10 9-18 20-18 13 0 22 9 22 22v5H40v-9Z"
+      fill="#2d7f84"
+    />
+    <path
+      id="cap-brim"
+      d="M52 37h36c-2 7-9 11-18 11H52c-4 0-7-2-7-5s3-6 7-6Z"
+      fill="#215e61"
+    />
   </g>
 </svg>

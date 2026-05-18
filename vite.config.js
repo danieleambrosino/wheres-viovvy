@@ -1,3 +1,3 @@
 export default {
-    base: "/wheres-viovvy/",
-}
+  base: "/wheres-viovvy/",
+};

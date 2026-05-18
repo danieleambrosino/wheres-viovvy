@@ -1,10 +1,14 @@
-import panzoom, { type PanzoomInstance } from 'panzoom';
+import panzoom, { type PanzoomInstance } from "panzoom";
 
-import { MAP_HEIGHT, MAP_WIDTH } from './assetsConfig';
+import { MAP_HEIGHT, MAP_WIDTH } from "./assetsConfig";
 
 const DRAG_THRESHOLD = 8;
 
-function fitStageToViewport(stage: HTMLElement, viewport: HTMLElement, instance: PanzoomInstance) {
+function fitStageToViewport(
+  stage: HTMLElement,
+  viewport: HTMLElement,
+  instance: PanzoomInstance,
+) {
   const { width, height } = viewport.getBoundingClientRect();
 
   if (!width || !height) {
@@ -17,10 +21,13 @@ function fitStageToViewport(stage: HTMLElement, viewport: HTMLElement, instance:
 
   instance.zoomAbs(0, 0, scale);
   instance.moveTo(offsetX, offsetY);
-  stage.style.transformOrigin = '0 0';
+  stage.style.transformOrigin = "0 0";
 }
 
-function normalizeClickPosition(event: PointerEvent | MouseEvent, canvas: HTMLCanvasElement) {
+function normalizeClickPosition(
+  event: PointerEvent | MouseEvent,
+  canvas: HTMLCanvasElement,
+) {
   const rect = canvas.getBoundingClientRect();
 
   return {
@@ -55,7 +62,7 @@ export function createInteraction({
   const handlePointerDown = (event: PointerEvent) => {
     pointerOrigin = { x: event.clientX, y: event.clientY };
     dragged = false;
-    stage.classList.add('is-dragging');
+    stage.classList.add("is-dragging");
   };
 
   const handlePointerMove = (event: PointerEvent) => {
@@ -73,7 +80,7 @@ export function createInteraction({
 
   const handlePointerEnd = () => {
     pointerOrigin = null;
-    stage.classList.remove('is-dragging');
+    stage.classList.remove("is-dragging");
   };
 
   const handleCanvasPointerUp = (event: PointerEvent) => {
@@ -85,11 +92,17 @@ export function createInteraction({
     onMapClick(normalizeClickPosition(event, canvas));
   };
 
-  viewport.addEventListener('pointerdown', handlePointerDown, { passive: true });
-  viewport.addEventListener('pointermove', handlePointerMove, { passive: true });
-  window.addEventListener('pointerup', handlePointerEnd, { passive: true });
-  window.addEventListener('pointercancel', handlePointerEnd, { passive: true });
-  canvas.addEventListener('pointerup', handleCanvasPointerUp, { passive: true });
+  viewport.addEventListener("pointerdown", handlePointerDown, {
+    passive: true,
+  });
+  viewport.addEventListener("pointermove", handlePointerMove, {
+    passive: true,
+  });
+  window.addEventListener("pointerup", handlePointerEnd, { passive: true });
+  window.addEventListener("pointercancel", handlePointerEnd, { passive: true });
+  canvas.addEventListener("pointerup", handleCanvasPointerUp, {
+    passive: true,
+  });
 
   // Fallback for environments that don't support Pointer Events (old iOS Safari).
   let touchFallbackAdded = false;
@@ -103,12 +116,15 @@ export function createInteraction({
 
     if (!touch) return;
 
-    const fakeEvent = { clientX: touch.clientX, clientY: touch.clientY } as unknown as PointerEvent;
+    const fakeEvent = {
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+    } as unknown as PointerEvent;
     onMapClick(normalizeClickPosition(fakeEvent, canvas));
   };
 
-  if (typeof PointerEvent === 'undefined') {
-    canvas.addEventListener('touchend', handleTouchEnd, { passive: true });
+  if (typeof PointerEvent === "undefined") {
+    canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
     touchFallbackAdded = true;
   }
 
@@ -124,17 +140,17 @@ export function createInteraction({
   return {
     destroy() {
       resizeObserver.disconnect();
-      viewport.removeEventListener('pointerdown', handlePointerDown);
-      viewport.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('pointerup', handlePointerEnd);
-      window.removeEventListener('pointercancel', handlePointerEnd);
-      canvas.removeEventListener('pointerup', handleCanvasPointerUp);
+      viewport.removeEventListener("pointerdown", handlePointerDown);
+      viewport.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerEnd);
+      window.removeEventListener("pointercancel", handlePointerEnd);
+      canvas.removeEventListener("pointerup", handleCanvasPointerUp);
       if (touchFallbackAdded) {
-        canvas.removeEventListener('touchend', handleTouchEnd as EventListener);
+        canvas.removeEventListener("touchend", handleTouchEnd as EventListener);
       }
       instance.dispose();
-      stage.classList.remove('is-dragging');
-      stage.style.transform = '';
+      stage.classList.remove("is-dragging");
+      stage.style.transform = "";
     },
   };
 }

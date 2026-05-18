@@ -1,33 +1,89 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="2400" viewBox="0 0 2400 2400">
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="2400"
+  height="2400"
+  viewBox="0 0 2400 2400"
+>
   <defs>
-    <pattern id="background-square-tiles" width="180" height="180" patternUnits="userSpaceOnUse">
+    <pattern
+      id="background-square-tiles"
+      width="180"
+      height="180"
+      patternUnits="userSpaceOnUse"
+    >
       <rect width="180" height="180" fill="#f4ead7" />
       <path d="M0 0h180v180H0Z" fill="none" stroke="#eadcc2" stroke-width="6" />
       <circle cx="34" cy="34" r="8" fill="#dac7a2" />
       <circle cx="146" cy="45" r="6" fill="#d2bf98" />
       <circle cx="98" cy="122" r="7" fill="#d7c6a2" />
-      <path d="M118 0v180M0 88h180" stroke="#eadcc2" stroke-width="4" opacity="0.8" />
+      <path
+        d="M118 0v180M0 88h180"
+        stroke="#eadcc2"
+        stroke-width="4"
+        opacity="0.8"
+      />
     </pattern>
-    <pattern id="background-square-confetti" width="240" height="240" patternUnits="userSpaceOnUse">
+    <pattern
+      id="background-square-confetti"
+      width="240"
+      height="240"
+      patternUnits="userSpaceOnUse"
+    >
       <circle cx="36" cy="42" r="6" fill="#d45b42" opacity="0.6" />
       <circle cx="122" cy="56" r="5" fill="#2d7f84" opacity="0.45" />
       <circle cx="198" cy="128" r="7" fill="#ebbf5a" opacity="0.4" />
       <circle cx="84" cy="178" r="5" fill="#8f5650" opacity="0.4" />
-      <rect x="162" y="32" width="10" height="10" rx="2" fill="#c96e3e" opacity="0.4" />
-      <rect x="58" y="100" width="8" height="8" rx="2" fill="#417193" opacity="0.38" />
+      <rect
+        x="162"
+        y="32"
+        width="10"
+        height="10"
+        rx="2"
+        fill="#c96e3e"
+        opacity="0.4"
+      />
+      <rect
+        x="58"
+        y="100"
+        width="8"
+        height="8"
+        rx="2"
+        fill="#417193"
+        opacity="0.38"
+      />
     </pattern>
   </defs>
 
   <g id="background-square">
     <g id="base-layers">
       <rect id="base-fill" width="2400" height="2400" fill="#f6ecd9" />
-      <rect id="tile-overlay" width="2400" height="2400" fill="url(#background-square-tiles)" />
+      <rect
+        id="tile-overlay"
+        width="2400"
+        height="2400"
+        fill="url(#background-square-tiles)"
+      />
     </g>
 
     <g id="terrain">
-      <path id="upper-hill" d="M-120 430C290 270 760 250 1250 430s830 240 1270 110v310c-410 150-950 170-1470-10S190 650-120 760Z" fill="#dbc8a7" opacity="0.9" />
-      <path id="lower-hill" d="M170 1710c260-170 590-250 930-220s650 140 1010 340v290c-420-170-790-250-1130-270s-620 40-930 180Z" fill="#d7c097" opacity="0.88" />
-      <path id="center-ridge" d="M580 1040c170-60 390-70 610-20s430 160 650 330v120c-270-170-500-270-700-320s-370-50-560-6Z" fill="#edd8b6" opacity="0.9" />
+      <path
+        id="upper-hill"
+        d="M-120 430C290 270 760 250 1250 430s830 240 1270 110v310c-410 150-950 170-1470-10S190 650-120 760Z"
+        fill="#dbc8a7"
+        opacity="0.9"
+      />
+      <path
+        id="lower-hill"
+        d="M170 1710c260-170 590-250 930-220s650 140 1010 340v290c-420-170-790-250-1130-270s-620 40-930 180Z"
+        fill="#d7c097"
+        opacity="0.88"
+      />
+      <path
+        id="center-ridge"
+        d="M580 1040c170-60 390-70 610-20s430 160 650 330v120c-270-170-500-270-700-320s-370-50-560-6Z"
+        fill="#edd8b6"
+        opacity="0.9"
+      />
     </g>
 
     <g id="canopies">
@@ -41,16 +97,52 @@
 
     <g id="buildings">
       <g id="building-coral">
-        <rect id="building-coral-body" x="260" y="1460" width="240" height="170" rx="24" fill="#ef835d" />
-        <path id="building-coral-roof" d="M240 1460h280l-140-90Z" fill="#cb583e" />
+        <rect
+          id="building-coral-body"
+          x="260"
+          y="1460"
+          width="240"
+          height="170"
+          rx="24"
+          fill="#ef835d"
+        />
+        <path
+          id="building-coral-roof"
+          d="M240 1460h280l-140-90Z"
+          fill="#cb583e"
+        />
       </g>
       <g id="building-teal">
-        <rect id="building-teal-body" x="840" y="1540" width="220" height="150" rx="22" fill="#4e9aa0" />
-        <path id="building-teal-roof" d="M820 1540h260l-130-82Z" fill="#2f7c82" />
+        <rect
+          id="building-teal-body"
+          x="840"
+          y="1540"
+          width="220"
+          height="150"
+          rx="22"
+          fill="#4e9aa0"
+        />
+        <path
+          id="building-teal-roof"
+          d="M820 1540h260l-130-82Z"
+          fill="#2f7c82"
+        />
       </g>
       <g id="building-gold">
-        <rect id="building-gold-body" x="1540" y="1420" width="250" height="180" rx="24" fill="#f0c26a" />
-        <path id="building-gold-roof" d="M1515 1420h300l-150-96Z" fill="#d6a345" />
+        <rect
+          id="building-gold-body"
+          x="1540"
+          y="1420"
+          width="250"
+          height="180"
+          rx="24"
+          fill="#f0c26a"
+        />
+        <path
+          id="building-gold-roof"
+          d="M1515 1420h300l-150-96Z"
+          fill="#d6a345"
+        />
       </g>
     </g>
 
@@ -66,6 +158,12 @@
       <circle id="shrub-3" cx="1370" cy="1810" r="24" />
     </g>
 
-    <rect id="confetti-overlay" width="2400" height="2400" fill="url(#background-square-confetti)" opacity="0.65" />
+    <rect
+      id="confetti-overlay"
+      width="2400"
+      height="2400"
+      fill="url(#background-square-confetti)"
+      opacity="0.65"
+    />
   </g>
 </svg>

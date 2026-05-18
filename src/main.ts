@@ -1,14 +1,14 @@
-import './style.css';
-import { ASSET_MANIFEST, MAP_WIDTH } from './assetsConfig';
-import { generateScene, type HitRegion } from './engine';
-import { createInteraction } from './interaction';
+import "./style.css";
+import { ASSET_MANIFEST, MAP_WIDTH } from "./assetsConfig";
+import { generateScene, type HitRegion } from "./engine";
+import { createInteraction } from "./interaction";
 
 const FEEDBACK_DISPLAY_DURATION = 1400;
 const FEEDBACK_LABEL_BOTTOM_THRESHOLD = 68;
 const FEEDBACK_LABEL_RIGHT_MARGIN = 200;
 const HIT_FEEDBACK_LABELS = {
-  success: 'Hai trovato Viovvy!',
-  error: 'Non è lei',
+  success: "Hai trovato Viovvy!",
+  error: "Non è lei",
 } as const;
 
 function getElement<T extends Element = HTMLElement>(selector: string): T {
@@ -22,39 +22,41 @@ function getElement<T extends Element = HTMLElement>(selector: string): T {
 }
 
 const refs = {
-  regenerateButton: getElement<HTMLButtonElement>('#regenerate-button'),
-  sceneStage: getElement<HTMLElement>('#scene-stage'),
-  statusBadge: getElement<HTMLElement>('#status-badge'),
-  statusMessage: getElement<HTMLElement>('#status-message'),
-  hitFeedbackTemplate: getElement<HTMLTemplateElement>('#hit-feedback-template'),
-  targetPreview: getElement<HTMLImageElement>('#target-preview'),
-  viewport: getElement<HTMLElement>('#viewport'),
+  regenerateButton: getElement<HTMLButtonElement>("#regenerate-button"),
+  sceneStage: getElement<HTMLElement>("#scene-stage"),
+  statusBadge: getElement<HTMLElement>("#status-badge"),
+  statusMessage: getElement<HTMLElement>("#status-message"),
+  hitFeedbackTemplate: getElement<HTMLTemplateElement>(
+    "#hit-feedback-template",
+  ),
+  targetPreview: getElement<HTMLImageElement>("#target-preview"),
+  viewport: getElement<HTMLElement>("#viewport"),
 };
 
 const STATE = {
-  loading: 'loading',
-  playing: 'playing',
-  victory: 'victory',
-  error: 'error',
+  loading: "loading",
+  playing: "playing",
+  victory: "victory",
+  error: "error",
 } as const;
 type State = typeof STATE[keyof typeof STATE];
 
 const STATUS_CONTENT: Record<State, { badge: string; message: string }> = {
   [STATE.loading]: {
-    badge: 'Sto preparando la scena',
-    message: 'Creo una nuova folla da esplorare.',
+    badge: "Sto preparando la scena",
+    message: "Creo una nuova folla da esplorare.",
   },
   [STATE.playing]: {
-    badge: 'In cerca',
-    message: 'Trascina, fai zoom e tocca quando pensi di aver trovato Viovvy.',
+    badge: "In cerca",
+    message: "Trascina, fai zoom e tocca quando pensi di aver trovato Viovvy.",
   },
   [STATE.victory]: {
-    badge: 'Hai trovato Viovvy!',
-    message: 'Sì, è proprio lei!',
+    badge: "Hai trovato Viovvy!",
+    message: "Sì, è proprio lei!",
   },
   [STATE.error]: {
-    badge: 'Errore di caricamento',
-    message: 'Non riesco a caricare la scena. Prova di nuovo.',
+    badge: "Errore di caricamento",
+    message: "Non riesco a caricare la scena. Prova di nuovo.",
   },
 };
 
@@ -66,7 +68,7 @@ let isGenerating = false;
 let feedbackCleanupTimer = 0;
 
 refs.targetPreview.src = ASSET_MANIFEST.target;
-refs.targetPreview.decoding = 'async';
+refs.targetPreview.decoding = "async";
 
 function setState(state: State, message = STATUS_CONTENT[state].message) {
   currentState = state;
@@ -75,7 +77,10 @@ function setState(state: State, message = STATUS_CONTENT[state].message) {
   refs.statusMessage.textContent = message;
 }
 
-function isPointInsideBounds(point: { x: number; y: number }, bounds: { x: number; y: number; width: number; height: number }) {
+function isPointInsideBounds(
+  point: { x: number; y: number },
+  bounds: { x: number; y: number; width: number; height: number },
+) {
   return (
     point.x >= bounds.x &&
     point.x <= bounds.x + bounds.width &&
@@ -104,7 +109,7 @@ function clearScene() {
 
   clearFeedback();
   refs.sceneStage.replaceChildren();
-  refs.viewport.classList.remove('is-victory');
+  refs.viewport.classList.remove("is-victory");
   currentHitRegions = [];
 }
 
@@ -112,13 +117,18 @@ function shouldPlaceLabelBelow(bounds: { x: number; y: number }) {
   return bounds.y < FEEDBACK_LABEL_BOTTOM_THRESHOLD;
 }
 
-function shouldAlignLabelToEnd(bounds: { x: number; y: number; width: number }) {
+function shouldAlignLabelToEnd(
+  bounds: { x: number; y: number; width: number },
+) {
   return bounds.x + bounds.width > MAP_WIDTH - FEEDBACK_LABEL_RIGHT_MARGIN;
 }
 
-function createHitFeedback(region: HitRegion, variant: 'success' | 'error') {
-  const feedback = refs.hitFeedbackTemplate.content.firstElementChild!.cloneNode(true) as HTMLElement;
-  const labelElement = feedback.querySelector('.hit-feedback__label') as HTMLElement;
+function createHitFeedback(region: HitRegion, variant: "success" | "error") {
+  const feedback = refs.hitFeedbackTemplate.content.firstElementChild!
+    .cloneNode(true) as HTMLElement;
+  const labelElement = feedback.querySelector(
+    ".hit-feedback__label",
+  ) as HTMLElement;
   const { bounds } = region;
 
   feedback.hidden = false;
@@ -127,20 +137,24 @@ function createHitFeedback(region: HitRegion, variant: 'success' | 'error') {
   feedback.style.top = `${bounds.y}px`;
   feedback.style.width = `${bounds.width}px`;
   feedback.style.height = `${bounds.height}px`;
-  labelElement.textContent = HIT_FEEDBACK_LABELS[variant] ?? '';
+  labelElement.textContent = HIT_FEEDBACK_LABELS[variant] ?? "";
 
   if (shouldPlaceLabelBelow(bounds)) {
-    feedback.classList.add('hit-feedback--below');
+    feedback.classList.add("hit-feedback--below");
   }
 
   if (shouldAlignLabelToEnd(bounds)) {
-    feedback.classList.add('hit-feedback--align-end');
+    feedback.classList.add("hit-feedback--align-end");
   }
 
   return feedback;
 }
 
-function showHitFeedback(region: HitRegion, variant: 'success' | 'error', { persist = false } = {}) {
+function showHitFeedback(
+  region: HitRegion,
+  variant: "success" | "error",
+  { persist = false } = {},
+) {
   clearFeedback();
 
   const feedback = createHitFeedback(region, variant);
@@ -178,19 +192,25 @@ function handleMapClick(point: { x: number; y: number }) {
 
   if (!hitRegion) {
     clearFeedback();
-    setState(STATE.playing, 'Tocca un personaggio della folla per fare un tentativo.');
+    setState(
+      STATE.playing,
+      "Tocca un personaggio della folla per fare un tentativo.",
+    );
     return;
   }
 
-  if (hitRegion.type === 'target') {
-    showHitFeedback(hitRegion, 'success', { persist: true });
-    refs.viewport.classList.add('is-victory');
-    setState(STATE.victory, 'Sì, è proprio lei! Se vuoi, genera una nuova scena.');
+  if (hitRegion.type === "target") {
+    showHitFeedback(hitRegion, "success", { persist: true });
+    refs.viewport.classList.add("is-victory");
+    setState(
+      STATE.victory,
+      "Sì, è proprio lei! Se vuoi, genera una nuova scena.",
+    );
     return;
   }
 
-  showHitFeedback(hitRegion, 'error');
-  setState(STATE.playing, 'Questa non è Viovvy. Continua a cercarla.');
+  showHitFeedback(hitRegion, "error");
+  setState(STATE.playing, "Questa non è Viovvy. Continua a cercarla.");
 }
 
 async function startRound(): Promise<void> {
@@ -201,12 +221,12 @@ async function startRound(): Promise<void> {
   isGenerating = true;
   refs.regenerateButton.disabled = true;
   clearScene();
-  setState(STATE.loading, 'Sto preparando una nuova folla.');
+  setState(STATE.loading, "Sto preparando una nuova folla.");
 
   try {
     const { canvas, hitRegions } = await generateScene();
 
-    canvas.className = 'scene-canvas';
+    canvas.className = "scene-canvas";
     currentHitRegions = hitRegions;
     refs.sceneStage.append(canvas);
 
@@ -220,13 +240,13 @@ async function startRound(): Promise<void> {
     setState(STATE.playing);
   } catch (error) {
     console.error(error);
-    setState(STATE.error, 'Non riesco a caricare la scena. Prova di nuovo.');
+    setState(STATE.error, "Non riesco a caricare la scena. Prova di nuovo.");
   } finally {
     refs.regenerateButton.disabled = false;
     isGenerating = false;
   }
 }
 
-refs.regenerateButton.addEventListener('click', () => void startRound());
+refs.regenerateButton.addEventListener("click", () => void startRound());
 
 startRound();

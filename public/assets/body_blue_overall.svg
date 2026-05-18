@@ -1,9 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="150" viewBox="0 0 120 150">
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="120"
+  height="150"
+  viewBox="0 0 120 150"
+>
   <rect width="120" height="150" fill="none" />
   <g id="body-blue-overall">
     <g id="overall-top">
-      <path id="overall-base" d="M33 79c4-7 14-10 27-10 13 0 23 3 27 10l8 24-12 6-6-18v54H43V91l-6 18-12-6 8-24Z" fill="#355c8d" />
-      <rect id="shirt-panel" x="46" y="77" width="28" height="51" rx="6" fill="#f3f0e9" />
+      <path
+        id="overall-base"
+        d="M33 79c4-7 14-10 27-10 13 0 23 3 27 10l8 24-12 6-6-18v54H43V91l-6 18-12-6 8-24Z"
+        fill="#355c8d"
+      />
+      <rect
+        id="shirt-panel"
+        x="46"
+        y="77"
+        width="28"
+        height="51"
+        rx="6"
+        fill="#f3f0e9"
+      />
       <g id="straps" fill="#284465">
         <rect id="left-strap" x="40" y="82" width="8" height="50" rx="4" />
         <rect id="right-strap" x="72" y="82" width="8" height="50" rx="4" />

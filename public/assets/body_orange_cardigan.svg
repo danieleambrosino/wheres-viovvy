@@ -1,9 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="150" viewBox="0 0 120 150">
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="120"
+  height="150"
+  viewBox="0 0 120 150"
+>
   <rect width="120" height="150" fill="none" />
   <g id="body-orange-cardigan">
     <g id="cardigan-top">
-      <path id="cardigan-base" d="M35 79c4-7 13-10 25-10 13 0 22 3 25 10l8 23-11 5-8-16v54H46V91l-8 16-11-5 8-23Z" fill="#cf7a49" />
-      <rect id="shirt-panel" x="52" y="75" width="16" height="54" rx="4" fill="#fbf4ec" />
+      <path
+        id="cardigan-base"
+        d="M35 79c4-7 13-10 25-10 13 0 22 3 25 10l8 23-11 5-8-16v54H46V91l-8 16-11-5 8-23Z"
+        fill="#cf7a49"
+      />
+      <rect
+        id="shirt-panel"
+        x="52"
+        y="75"
+        width="16"
+        height="54"
+        rx="4"
+        fill="#fbf4ec"
+      />
       <g id="cardigan-sides" fill="#c36a38">
         <path id="left-side" d="M44 80h13v50H44z" />
         <path id="right-side" d="M63 80h13v50H63z" />

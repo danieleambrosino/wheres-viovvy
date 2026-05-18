@@ -1,8 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="150" viewBox="0 0 120 150">
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="120"
+  height="150"
+  viewBox="0 0 120 150"
+>
   <rect width="120" height="150" fill="none" />
   <g id="headwear-red-beanie">
-    <path id="beanie-cap" d="M38 34c0-14 9-24 22-24 14 0 22 11 22 24 0 1 0 3-1 4H39c-1-1-1-3-1-4Z" fill="#c94b38" />
-    <rect id="beanie-band" x="37" y="34" width="46" height="10" rx="5" fill="#f4ede5" />
+    <path
+      id="beanie-cap"
+      d="M38 34c0-14 9-24 22-24 14 0 22 11 22 24 0 1 0 3-1 4H39c-1-1-1-3-1-4Z"
+      fill="#c94b38"
+    />
+    <rect
+      id="beanie-band"
+      x="37"
+      y="34"
+      width="46"
+      height="10"
+      rx="5"
+      fill="#f4ede5"
+    />
     <circle id="beanie-pom" cx="60" cy="10" r="5" fill="#f4ede5" />
   </g>
 </svg>

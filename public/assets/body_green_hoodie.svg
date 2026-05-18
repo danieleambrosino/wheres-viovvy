@@ -1,10 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="150" viewBox="0 0 120 150">
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="120"
+  height="150"
+  viewBox="0 0 120 150"
+>
   <rect width="120" height="150" fill="none" />
   <g id="body-green-hoodie">
     <g id="hoodie-top">
-      <path id="hoodie-base" d="M34 79c4-7 13-10 26-10s22 3 26 10l9 24-12 6-7-17v53H44V92l-7 17-12-6 9-24Z" fill="#5d8740" />
-      <path id="hood" d="M46 79c3-5 8-8 14-8s11 3 14 8l-6 9H52l-6-9Z" fill="#4d7133" />
-      <rect id="front-panel" x="45" y="95" width="30" height="28" rx="8" fill="#648f46" />
+      <path
+        id="hoodie-base"
+        d="M34 79c4-7 13-10 26-10s22 3 26 10l9 24-12 6-7-17v53H44V92l-7 17-12-6 9-24Z"
+        fill="#5d8740"
+      />
+      <path
+        id="hood"
+        d="M46 79c3-5 8-8 14-8s11 3 14 8l-6 9H52l-6-9Z"
+        fill="#4d7133"
+      />
+      <rect
+        id="front-panel"
+        x="45"
+        y="95"
+        width="30"
+        height="28"
+        rx="8"
+        fill="#648f46"
+      />
     </g>
     <g id="legs" fill="#37546f">
       <rect id="left-leg" x="45" y="123" width="12" height="22" rx="5" />

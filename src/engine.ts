@@ -4,12 +4,17 @@ import {
   MAP_HEIGHT,
   MAP_WIDTH,
   PAPER_DOLL_LAYERS,
+  type PaperDollLayer,
   SPRITE_HEIGHT,
   SPRITE_WIDTH,
-  type PaperDollLayer,
-} from './assetsConfig';
+} from "./assetsConfig";
 
-interface Bounds { x: number; y: number; width: number; height: number };
+interface Bounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 interface LoadedAssets {
   background: HTMLImageElement;
@@ -22,7 +27,7 @@ interface Distractor {
   parts: Record<PaperDollLayer, HTMLImageElement>;
 }
 
-export type HitRegion = { type: 'distractor' | 'target'; bounds: Bounds };
+export type HitRegion = { type: "distractor" | "target"; bounds: Bounds };
 
 let loadedAssetsPromise: Promise<LoadedAssets> | undefined;
 const MAX_DISTRACTOR_PLACEMENT_ATTEMPTS = 60;
@@ -31,9 +36,10 @@ const MAX_DISTRACTOR_GENERATION_ROLLS = DISTRACTOR_COUNT * 3;
 function loadImage(source: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const image = new Image();
-    image.decoding = 'async';
+    image.decoding = "async";
     image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error(`Impossibile caricare l'asset ${source}.`));
+    image.onerror = () =>
+      reject(new Error(`Impossibile caricare l'asset ${source}.`));
     image.src = source;
   });
 }
@@ -47,7 +53,7 @@ function randomChoice<T>(items: T[]): T {
 }
 
 function createCanvas(): HTMLCanvasElement {
-  const canvas = document.createElement('canvas');
+  const canvas = document.createElement("canvas");
   canvas.width = MAP_WIDTH;
   canvas.height = MAP_HEIGHT;
   return canvas;
@@ -58,12 +64,21 @@ function createBounds(x: number, y: number): Bounds {
 }
 
 function randomBounds(): Bounds {
-  return createBounds(randomInt(0, MAP_WIDTH - SPRITE_WIDTH), randomInt(0, MAP_HEIGHT - SPRITE_HEIGHT));
+  return createBounds(
+    randomInt(0, MAP_WIDTH - SPRITE_WIDTH),
+    randomInt(0, MAP_HEIGHT - SPRITE_HEIGHT),
+  );
 }
 
 function intersectionArea(a: Bounds, b: Bounds): number {
-  const width = Math.max(0, Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x));
-  const height = Math.max(0, Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y));
+  const width = Math.max(
+    0,
+    Math.min(a.x + a.width, b.x + b.width) - Math.max(a.x, b.x),
+  );
+  const height = Math.max(
+    0,
+    Math.min(a.y + a.height, b.y + b.height) - Math.max(a.y, b.y),
+  );
   return width * height;
 }
 
@@ -76,22 +91,36 @@ function createTargetHotspot(bounds: Bounds): Bounds {
   };
 }
 
-function isDistractorPlacementValid(bounds: Bounds, targetBounds: Bounds, targetHotspot: Bounds): boolean {
+function isDistractorPlacementValid(
+  bounds: Bounds,
+  targetBounds: Bounds,
+  targetHotspot: Bounds,
+): boolean {
   const overlapWithTarget = intersectionArea(bounds, targetBounds);
-  const overlapRatio = overlapWithTarget / (targetBounds.width * targetBounds.height);
+  const overlapRatio = overlapWithTarget /
+    (targetBounds.width * targetBounds.height);
   return overlapRatio < 0.38 && intersectionArea(bounds, targetHotspot) === 0;
 }
 
-function createDistractor(assets: LoadedAssets, targetBounds: Bounds): Distractor | null {
+function createDistractor(
+  assets: LoadedAssets,
+  targetBounds: Bounds,
+): Distractor | null {
   const targetHotspot = createTargetHotspot(targetBounds);
-  for (let attempts = 0; attempts < MAX_DISTRACTOR_PLACEMENT_ATTEMPTS; attempts += 1) {
+  for (
+    let attempts = 0;
+    attempts < MAX_DISTRACTOR_PLACEMENT_ATTEMPTS;
+    attempts += 1
+  ) {
     const bounds = randomBounds();
 
     if (isDistractorPlacementValid(bounds, targetBounds, targetHotspot)) {
       return {
         bounds,
         parts: Object.fromEntries(
-          PAPER_DOLL_LAYERS.map((layer) => [layer, randomChoice(assets.paperDoll[layer])])
+          PAPER_DOLL_LAYERS.map((
+            layer,
+          ) => [layer, randomChoice(assets.paperDoll[layer])]),
         ) as Record<PaperDollLayer, HTMLImageElement>,
       };
     }
@@ -100,33 +129,43 @@ function createDistractor(assets: LoadedAssets, targetBounds: Bounds): Distracto
   return null;
 }
 
-function drawPaperDoll(context: CanvasRenderingContext2D, distractor: Distractor) {
+function drawPaperDoll(
+  context: CanvasRenderingContext2D,
+  distractor: Distractor,
+) {
   for (const layer of PAPER_DOLL_LAYERS) {
     context.drawImage(
       distractor.parts[layer],
       distractor.bounds.x,
       distractor.bounds.y,
       distractor.bounds.width,
-      distractor.bounds.height
+      distractor.bounds.height,
     );
   }
 }
 
-function createHitRegion(type: HitRegion['type'], bounds: Bounds): HitRegion {
+function createHitRegion(type: HitRegion["type"], bounds: Bounds): HitRegion {
   return {
     type,
     bounds: { ...bounds },
   };
 }
 
-function drawDistractors(context: CanvasRenderingContext2D, distractors: Distractor[], hitRegions: HitRegion[]) {
+function drawDistractors(
+  context: CanvasRenderingContext2D,
+  distractors: Distractor[],
+  hitRegions: HitRegion[],
+) {
   distractors.forEach((distractor) => {
     drawPaperDoll(context, distractor);
-    hitRegions.push(createHitRegion('distractor', distractor.bounds));
+    hitRegions.push(createHitRegion("distractor", distractor.bounds));
   });
 }
 
-function createDistractors(assets: LoadedAssets, targetBounds: Bounds): Distractor[] {
+function createDistractors(
+  assets: LoadedAssets,
+  targetBounds: Bounds,
+): Distractor[] {
   const distractors: Distractor[] = [];
 
   for (let roll = 0; roll < MAX_DISTRACTOR_GENERATION_ROLLS; roll += 1) {
@@ -147,26 +186,33 @@ function createDistractors(assets: LoadedAssets, targetBounds: Bounds): Distract
 async function loadAssets(): Promise<LoadedAssets> {
   if (!loadedAssetsPromise) {
     const assetEntries: Array<[string, string]> = [
-      ['background', ASSET_MANIFEST.background],
-      ['target', ASSET_MANIFEST.target],
+      ["background", ASSET_MANIFEST.background],
+      ["target", ASSET_MANIFEST.target],
       ...PAPER_DOLL_LAYERS.flatMap((layer) =>
-        ASSET_MANIFEST[layer].map((source, index) => [`${layer}:${index}`, source])
+        ASSET_MANIFEST[layer].map((
+          source,
+          index,
+        ) => [`${layer}:${index}`, source])
       ),
     ];
 
     loadedAssetsPromise = Promise.all(
-      assetEntries.map(([key, source]) => loadImage(source).then((image) => [key, image] as const))
+      assetEntries.map(([key, source]) =>
+        loadImage(source).then((image) => [key, image] as const)
+      ),
     ).then((entries) => {
       const loadedMap = new Map(entries as Array<[string, HTMLImageElement]>);
 
       return {
-        background: loadedMap.get('background')!,
-        target: loadedMap.get('target')!,
+        background: loadedMap.get("background")!,
+        target: loadedMap.get("target")!,
         paperDoll: Object.fromEntries(
           PAPER_DOLL_LAYERS.map((layer) => [
             layer,
-            ASSET_MANIFEST[layer].map((_, index) => loadedMap.get(`${layer}:${index}`)!),
-          ])
+            ASSET_MANIFEST[layer].map((_, index) =>
+              loadedMap.get(`${layer}:${index}`)!
+            ),
+          ]),
         ) as Record<PaperDollLayer, HTMLImageElement[]>,
       } as LoadedAssets;
     });
@@ -175,13 +221,15 @@ async function loadAssets(): Promise<LoadedAssets> {
   return loadedAssetsPromise;
 }
 
-export async function generateScene(): Promise<{ canvas: HTMLCanvasElement; hitRegions: HitRegion[] }> {
+export async function generateScene(): Promise<
+  { canvas: HTMLCanvasElement; hitRegions: HitRegion[] }
+> {
   const assets = await loadAssets();
   const canvas = createCanvas();
-  const context = canvas.getContext('2d');
+  const context = canvas.getContext("2d");
 
   if (!context) {
-    throw new Error('Impossibile ottenere il contesto 2D del canvas.');
+    throw new Error("Impossibile ottenere il contesto 2D del canvas.");
   }
 
   context.imageSmoothingEnabled = true;
@@ -189,7 +237,7 @@ export async function generateScene(): Promise<{ canvas: HTMLCanvasElement; hitR
 
   const targetBounds = randomBounds();
   const distractors = createDistractors(assets, targetBounds).sort(
-    (left, right) => left.bounds.y - right.bounds.y
+    (left, right) => left.bounds.y - right.bounds.y,
   );
   const splitIndex = Math.floor(distractors.length / 2);
   const backgroundDistractors = distractors.slice(0, splitIndex);
@@ -203,9 +251,9 @@ export async function generateScene(): Promise<{ canvas: HTMLCanvasElement; hitR
     targetBounds.x,
     targetBounds.y,
     targetBounds.width,
-    targetBounds.height
+    targetBounds.height,
   );
-  hitRegions.push(createHitRegion('target', targetBounds));
+  hitRegions.push(createHitRegion("target", targetBounds));
 
   drawDistractors(context, foregroundDistractors, hitRegions);
 

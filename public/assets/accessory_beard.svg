@@ -1,7 +1,23 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="150" viewBox="0 0 120 150">
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="120"
+  height="150"
+  viewBox="0 0 120 150"
+>
   <rect width="120" height="150" fill="none" />
   <g id="accessory-beard">
-    <path id="beard" d="M45 59c5 4 10 6 15 6s10-2 15-6c-1 10-6 19-15 19s-14-9-15-19Z" fill="#463126" />
-    <path id="mustache-line" d="M52 58c2 2 5 3 8 3 3 0 6-1 8-3" fill="none" stroke="#463126" stroke-width="4" stroke-linecap="round" />
+    <path
+      id="beard"
+      d="M45 59c5 4 10 6 15 6s10-2 15-6c-1 10-6 19-15 19s-14-9-15-19Z"
+      fill="#463126"
+    />
+    <path
+      id="mustache-line"
+      d="M52 58c2 2 5 3 8 3 3 0 6-1 8-3"
+      fill="none"
+      stroke="#463126"
+      stroke-width="4"
+      stroke-linecap="round"
+    />
   </g>
 </svg>
