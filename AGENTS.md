@@ -20,6 +20,7 @@
 - `engine.ts` — asset loading, scene generation, collision, hit regions
 - `interaction.ts` — panzoom wrapper, pointer events, resize handling
 - `assetsConfig.ts` — constants, layer types, asset manifest
+- `utils.ts` — generic utilities (randomInt, randomChoice, loadImage)
 - **Don't cross module boundaries.** Scene logic stays in engine, UI stays in main.
 - **No frameworks.** The app uses vanilla TS + canvas.
 

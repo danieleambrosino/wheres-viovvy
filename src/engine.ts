@@ -8,6 +8,7 @@ import {
   SPRITE_HEIGHT,
   SPRITE_WIDTH,
 } from "./assetsConfig";
+import { loadImage, randomChoice, randomInt } from "./utils";
 
 export interface Point {
   x: number;
@@ -250,23 +251,4 @@ function createCanvas(): HTMLCanvasElement {
   canvas.width = MAP_WIDTH;
   canvas.height = MAP_HEIGHT;
   return canvas;
-}
-
-function randomChoice<T>(items: T[]): T {
-  return items[randomInt(0, items.length - 1)];
-}
-
-function randomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function loadImage(source: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.decoding = "async";
-    image.onload = () => resolve(image);
-    image.onerror = () =>
-      reject(new Error(`Impossibile caricare l'asset ${source}.`));
-    image.src = source;
-  });
 }
