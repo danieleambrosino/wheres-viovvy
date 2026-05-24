@@ -9,6 +9,10 @@ const PANZOOM_MAX_ZOOM = 4.8;
 const PANZOOM_MIN_ZOOM = 0.14;
 const PANZOOM_ZOOM_DOUBLE_CLICK_SPEED = 1;
 
+export interface Interaction {
+  destroy(): void;
+}
+
 export function createInteraction({
   viewport,
   stage,
@@ -19,7 +23,7 @@ export function createInteraction({
   stage: HTMLElement;
   canvas: HTMLCanvasElement;
   onMapClick: (point: Point) => void;
-}) {
+}): Interaction {
   const instance = panzoom(stage, {
     bounds: true,
     boundsPadding: PANZOOM_BOUNDS_PADDING,
@@ -105,7 +109,7 @@ function fitStageToViewport(
   stage: HTMLElement,
   viewport: HTMLElement,
   instance: PanzoomInstance,
-) {
+): void {
   const { width, height } = viewport.getBoundingClientRect();
 
   if (!width || !height) {
@@ -124,7 +128,7 @@ function fitStageToViewport(
 function normalizeClickPosition(
   event: PointerEvent | MouseEvent,
   canvas: HTMLCanvasElement,
-) {
+): Point {
   const rect = canvas.getBoundingClientRect();
 
   return {

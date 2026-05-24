@@ -6,7 +6,7 @@ import {
   type HitRegion,
   type Point,
 } from "./engine";
-import { createInteraction } from "./interaction";
+import { createInteraction, type Interaction } from "./interaction";
 
 const FEEDBACK_DISPLAY_DURATION = 1400;
 const FEEDBACK_LABEL_BOTTOM_THRESHOLD = 68;
@@ -68,7 +68,7 @@ const refs = {
 let currentState: State = STATE.loading;
 let currentHitRegions: HitRegion[] = [];
 let activeFeedback: HTMLElement | null = null;
-let currentInteraction: { destroy(): void } | null = null;
+let currentInteraction: Interaction | null = null;
 let isGenerating = false;
 let feedbackCleanupTimer = 0;
 
