@@ -16,28 +16,6 @@ const HIT_FEEDBACK_LABELS = {
   error: "Non è lei",
 } as const;
 
-function getElement<T extends Element = HTMLElement>(selector: string): T {
-  const element = document.querySelector<T>(selector);
-
-  if (!element) {
-    throw new Error(`Elemento DOM non trovato: ${selector}`);
-  }
-
-  return element;
-}
-
-const refs = {
-  regenerateButton: getElement<HTMLButtonElement>("#regenerate-button"),
-  sceneStage: getElement<HTMLElement>("#scene-stage"),
-  statusBadge: getElement<HTMLElement>("#status-badge"),
-  statusMessage: getElement<HTMLElement>("#status-message"),
-  hitFeedbackTemplate: getElement<HTMLTemplateElement>(
-    "#hit-feedback-template",
-  ),
-  targetPreview: getElement<HTMLImageElement>("#target-preview"),
-  viewport: getElement<HTMLElement>("#viewport"),
-};
-
 const STATE = {
   loading: "loading",
   playing: "playing",
@@ -65,6 +43,28 @@ const STATUS_CONTENT: Record<State, { badge: string; message: string }> = {
   },
 };
 
+function getElement<T extends Element = HTMLElement>(selector: string): T {
+  const element = document.querySelector<T>(selector);
+
+  if (!element) {
+    throw new Error(`Elemento DOM non trovato: ${selector}`);
+  }
+
+  return element;
+}
+
+const refs = {
+  regenerateButton: getElement<HTMLButtonElement>("#regenerate-button"),
+  sceneStage: getElement<HTMLElement>("#scene-stage"),
+  statusBadge: getElement<HTMLElement>("#status-badge"),
+  statusMessage: getElement<HTMLElement>("#status-message"),
+  hitFeedbackTemplate: getElement<HTMLTemplateElement>(
+    "#hit-feedback-template",
+  ),
+  targetPreview: getElement<HTMLImageElement>("#target-preview"),
+  viewport: getElement<HTMLElement>("#viewport"),
+};
+
 let currentState: State = STATE.loading;
 let currentHitRegions: HitRegion[] = [];
 let activeFeedback: HTMLElement | null = null;
@@ -74,147 +74,6 @@ let feedbackCleanupTimer = 0;
 
 refs.targetPreview.src = ASSET_MANIFEST.target;
 refs.targetPreview.decoding = "async";
-
-function setState(state: State, message = STATUS_CONTENT[state].message) {
-  currentState = state;
-  refs.statusBadge.dataset.state = state;
-  refs.statusBadge.textContent = STATUS_CONTENT[state].badge;
-  refs.statusMessage.textContent = message;
-}
-
-function isPointInsideBounds(
-  point: Point,
-  bounds: Bounds,
-) {
-  return (
-    point.x >= bounds.x &&
-    point.x <= bounds.x + bounds.width &&
-    point.y >= bounds.y &&
-    point.y <= bounds.y + bounds.height
-  );
-}
-
-function clearFeedback() {
-  if (feedbackCleanupTimer) {
-    clearTimeout(feedbackCleanupTimer);
-    feedbackCleanupTimer = 0;
-  }
-
-  if (activeFeedback) {
-    activeFeedback.remove();
-    activeFeedback = null;
-  }
-}
-
-function clearScene() {
-  if (currentInteraction) {
-    currentInteraction.destroy();
-    currentInteraction = null;
-  }
-
-  clearFeedback();
-  refs.sceneStage.replaceChildren();
-  refs.viewport.classList.remove("is-victory");
-  currentHitRegions = [];
-}
-
-function shouldPlaceLabelBelow(bounds: Bounds) {
-  return bounds.y < FEEDBACK_LABEL_BOTTOM_THRESHOLD;
-}
-
-function shouldAlignLabelToEnd(bounds: Bounds) {
-  return bounds.x + bounds.width > MAP_WIDTH - FEEDBACK_LABEL_RIGHT_MARGIN;
-}
-
-function createHitFeedback(region: HitRegion, variant: "success" | "error") {
-  const feedback = refs.hitFeedbackTemplate.content.firstElementChild!
-    .cloneNode(true) as HTMLElement;
-  const labelElement = feedback.querySelector(
-    ".hit-feedback__label",
-  ) as HTMLElement;
-  const { bounds } = region;
-
-  feedback.hidden = false;
-  feedback.dataset.variant = variant;
-  feedback.style.left = `${bounds.x}px`;
-  feedback.style.top = `${bounds.y}px`;
-  feedback.style.width = `${bounds.width}px`;
-  feedback.style.height = `${bounds.height}px`;
-  labelElement.textContent = HIT_FEEDBACK_LABELS[variant] ?? "";
-
-  if (shouldPlaceLabelBelow(bounds)) {
-    feedback.classList.add("hit-feedback--below");
-  }
-
-  if (shouldAlignLabelToEnd(bounds)) {
-    feedback.classList.add("hit-feedback--align-end");
-  }
-
-  return feedback;
-}
-
-function showHitFeedback(
-  region: HitRegion,
-  variant: "success" | "error",
-  { persist = false } = {},
-) {
-  clearFeedback();
-
-  const feedback = createHitFeedback(region, variant);
-  refs.sceneStage.append(feedback);
-  activeFeedback = feedback;
-
-  if (!persist) {
-    feedbackCleanupTimer = window.setTimeout(() => {
-      if (activeFeedback === feedback) {
-        feedback.remove();
-        activeFeedback = null;
-      }
-    }, FEEDBACK_DISPLAY_DURATION);
-  }
-}
-
-function findTopmostHitRegion(point: Point) {
-  for (let index = currentHitRegions.length - 1; index >= 0; index -= 1) {
-    const region = currentHitRegions[index];
-
-    if (isPointInsideBounds(point, region.bounds)) {
-      return region;
-    }
-  }
-
-  return null;
-}
-
-function handleMapClick(point: Point) {
-  if (currentState !== STATE.playing) {
-    return;
-  }
-
-  const hitRegion = findTopmostHitRegion(point);
-
-  if (!hitRegion) {
-    clearFeedback();
-    setState(
-      STATE.playing,
-      "Tocca un personaggio della folla per fare un tentativo.",
-    );
-    return;
-  }
-
-  if (hitRegion.type === "target") {
-    showHitFeedback(hitRegion, "success", { persist: true });
-    refs.viewport.classList.add("is-victory");
-    setState(
-      STATE.victory,
-      "Sì, è proprio lei! Se vuoi, genera una nuova scena.",
-    );
-    return;
-  }
-
-  showHitFeedback(hitRegion, "error");
-  setState(STATE.playing, "Questa non è Viovvy. Continua a cercarla.");
-}
 
 async function startRound(): Promise<void> {
   if (isGenerating) {
@@ -248,6 +107,147 @@ async function startRound(): Promise<void> {
     refs.regenerateButton.disabled = false;
     isGenerating = false;
   }
+}
+
+function handleMapClick(point: Point) {
+  if (currentState !== STATE.playing) {
+    return;
+  }
+
+  const hitRegion = findTopmostHitRegion(point);
+
+  if (!hitRegion) {
+    clearFeedback();
+    setState(
+      STATE.playing,
+      "Tocca un personaggio della folla per fare un tentativo.",
+    );
+    return;
+  }
+
+  if (hitRegion.type === "target") {
+    showHitFeedback(hitRegion, "success", { persist: true });
+    refs.viewport.classList.add("is-victory");
+    setState(
+      STATE.victory,
+      "Sì, è proprio lei! Se vuoi, genera una nuova scena.",
+    );
+    return;
+  }
+
+  showHitFeedback(hitRegion, "error");
+  setState(STATE.playing, "Questa non è Viovvy. Continua a cercarla.");
+}
+
+function findTopmostHitRegion(point: Point) {
+  for (let index = currentHitRegions.length - 1; index >= 0; index -= 1) {
+    const region = currentHitRegions[index];
+
+    if (isPointInsideBounds(point, region.bounds)) {
+      return region;
+    }
+  }
+
+  return null;
+}
+
+function showHitFeedback(
+  region: HitRegion,
+  variant: "success" | "error",
+  { persist = false } = {},
+) {
+  clearFeedback();
+
+  const feedback = createHitFeedback(region, variant);
+  refs.sceneStage.append(feedback);
+  activeFeedback = feedback;
+
+  if (!persist) {
+    feedbackCleanupTimer = window.setTimeout(() => {
+      if (activeFeedback === feedback) {
+        feedback.remove();
+        activeFeedback = null;
+      }
+    }, FEEDBACK_DISPLAY_DURATION);
+  }
+}
+
+function createHitFeedback(region: HitRegion, variant: "success" | "error") {
+  const feedback = refs.hitFeedbackTemplate.content.firstElementChild!
+    .cloneNode(true) as HTMLElement;
+  const labelElement = feedback.querySelector(
+    ".hit-feedback__label",
+  ) as HTMLElement;
+  const { bounds } = region;
+
+  feedback.hidden = false;
+  feedback.dataset.variant = variant;
+  feedback.style.left = `${bounds.x}px`;
+  feedback.style.top = `${bounds.y}px`;
+  feedback.style.width = `${bounds.width}px`;
+  feedback.style.height = `${bounds.height}px`;
+  labelElement.textContent = HIT_FEEDBACK_LABELS[variant] ?? "";
+
+  if (shouldPlaceLabelBelow(bounds)) {
+    feedback.classList.add("hit-feedback--below");
+  }
+
+  if (shouldAlignLabelToEnd(bounds)) {
+    feedback.classList.add("hit-feedback--align-end");
+  }
+
+  return feedback;
+}
+
+function shouldPlaceLabelBelow(bounds: Bounds) {
+  return bounds.y < FEEDBACK_LABEL_BOTTOM_THRESHOLD;
+}
+
+function shouldAlignLabelToEnd(bounds: Bounds) {
+  return bounds.x + bounds.width > MAP_WIDTH - FEEDBACK_LABEL_RIGHT_MARGIN;
+}
+
+function clearScene() {
+  if (currentInteraction) {
+    currentInteraction.destroy();
+    currentInteraction = null;
+  }
+
+  clearFeedback();
+  refs.sceneStage.replaceChildren();
+  refs.viewport.classList.remove("is-victory");
+  currentHitRegions = [];
+}
+
+function clearFeedback() {
+  if (feedbackCleanupTimer) {
+    clearTimeout(feedbackCleanupTimer);
+    feedbackCleanupTimer = 0;
+  }
+
+  if (activeFeedback) {
+    activeFeedback.remove();
+    activeFeedback = null;
+  }
+}
+
+function isPointInsideBounds(
+  point: Point,
+  bounds: Bounds,
+) {
+  return (
+    point.x >= bounds.x &&
+    point.x <= bounds.x + bounds.width &&
+    point.y >= bounds.y &&
+    point.y <= bounds.y + bounds.height
+  );
+}
+
+function setState(state: State, message = STATUS_CONTENT[state].message) {
+  currentState = state;
+  refs.statusBadge.dataset.state = state;
+  refs.statusBadge.textContent = STATUS_CONTENT[state].badge;
+  refs.statusMessage.textContent = message;
 }
 
 refs.regenerateButton.addEventListener("click", () => void startRound());

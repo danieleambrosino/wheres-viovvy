@@ -5,38 +5,6 @@ import { type Point } from "./engine";
 
 const DRAG_THRESHOLD = 8;
 
-function fitStageToViewport(
-  stage: HTMLElement,
-  viewport: HTMLElement,
-  instance: PanzoomInstance,
-) {
-  const { width, height } = viewport.getBoundingClientRect();
-
-  if (!width || !height) {
-    return;
-  }
-
-  const scale = Math.min(width / MAP_WIDTH, height / MAP_HEIGHT);
-  const offsetX = (width - MAP_WIDTH * scale) / 2;
-  const offsetY = (height - MAP_HEIGHT * scale) / 2;
-
-  instance.zoomAbs(0, 0, scale);
-  instance.moveTo(offsetX, offsetY);
-  stage.style.transformOrigin = "0 0";
-}
-
-function normalizeClickPosition(
-  event: PointerEvent | MouseEvent,
-  canvas: HTMLCanvasElement,
-) {
-  const rect = canvas.getBoundingClientRect();
-
-  return {
-    x: (event.clientX - rect.left) * (MAP_WIDTH / rect.width),
-    y: (event.clientY - rect.top) * (MAP_HEIGHT / rect.height),
-  };
-}
-
 export function createInteraction({
   viewport,
   stage,
@@ -153,5 +121,37 @@ export function createInteraction({
       stage.classList.remove("is-dragging");
       stage.style.transform = "";
     },
+  };
+}
+
+function fitStageToViewport(
+  stage: HTMLElement,
+  viewport: HTMLElement,
+  instance: PanzoomInstance,
+) {
+  const { width, height } = viewport.getBoundingClientRect();
+
+  if (!width || !height) {
+    return;
+  }
+
+  const scale = Math.min(width / MAP_WIDTH, height / MAP_HEIGHT);
+  const offsetX = (width - MAP_WIDTH * scale) / 2;
+  const offsetY = (height - MAP_HEIGHT * scale) / 2;
+
+  instance.zoomAbs(0, 0, scale);
+  instance.moveTo(offsetX, offsetY);
+  stage.style.transformOrigin = "0 0";
+}
+
+function normalizeClickPosition(
+  event: PointerEvent | MouseEvent,
+  canvas: HTMLCanvasElement,
+) {
+  const rect = canvas.getBoundingClientRect();
+
+  return {
+    x: (event.clientX - rect.left) * (MAP_WIDTH / rect.width),
+    y: (event.clientY - rect.top) * (MAP_HEIGHT / rect.height),
   };
 }

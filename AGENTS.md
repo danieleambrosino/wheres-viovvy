@@ -50,3 +50,7 @@
 - DOM IDs: `kebab-case` (e.g. `#regenerate-button`, `#hit-feedback-template`)
 - CSS classes: `kebab-case` (e.g. `hit-feedback--below`, `is-dragging`)
 - Ref object keys: `camelCase` matching the stripped ID (e.g. `regenerateButton`, `hitFeedbackTemplate`)
+
+## Module Layout
+- "Newspaper style" ordering: setup first (imports, types, constants, module-level state), then functions in top-down dependency order — most public/abstract at the top, internal helpers below
+- This means each module reads like an article: the reader learns what it does upfront, then digs into details progressively
