@@ -4,6 +4,10 @@ import { MAP_HEIGHT, MAP_WIDTH } from "./assetsConfig";
 import { type Point } from "./engine";
 
 const DRAG_THRESHOLD = 8;
+const PANZOOM_BOUNDS_PADDING = 0.12;
+const PANZOOM_MAX_ZOOM = 4.8;
+const PANZOOM_MIN_ZOOM = 0.14;
+const PANZOOM_ZOOM_DOUBLE_CLICK_SPEED = 1;
 
 export function createInteraction({
   viewport,
@@ -18,11 +22,11 @@ export function createInteraction({
 }) {
   const instance = panzoom(stage, {
     bounds: true,
-    boundsPadding: 0.12,
-    maxZoom: 4.8,
-    minZoom: 0.14,
+    boundsPadding: PANZOOM_BOUNDS_PADDING,
+    maxZoom: PANZOOM_MAX_ZOOM,
+    minZoom: PANZOOM_MIN_ZOOM,
     smoothScroll: false,
-    zoomDoubleClickSpeed: 1,
+    zoomDoubleClickSpeed: PANZOOM_ZOOM_DOUBLE_CLICK_SPEED,
   });
 
   let pointerOrigin: Point | null = null;
