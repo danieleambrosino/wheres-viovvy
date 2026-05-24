@@ -1,6 +1,11 @@
 import "./style.css";
 import { ASSET_MANIFEST, MAP_WIDTH } from "./assetsConfig";
-import { generateScene, type Bounds, type HitRegion, type Point } from "./engine";
+import {
+  type Bounds,
+  generateScene,
+  type HitRegion,
+  type Point,
+} from "./engine";
 import { createInteraction } from "./interaction";
 
 const FEEDBACK_DISPLAY_DURATION = 1400;

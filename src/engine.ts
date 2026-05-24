@@ -35,7 +35,7 @@ interface Distractor {
 export interface HitRegion {
   type: "distractor" | "target";
   bounds: Bounds;
-};
+}
 
 export interface SceneResult {
   canvas: HTMLCanvasElement;
