@@ -1,6 +1,6 @@
 import "./style.css";
 import { ASSET_MANIFEST, MAP_WIDTH } from "./assetsConfig";
-import { generateScene, type HitRegion } from "./engine";
+import { generateScene, type Bounds, type HitRegion, type Point } from "./engine";
 import { createInteraction } from "./interaction";
 
 const FEEDBACK_DISPLAY_DURATION = 1400;
@@ -78,8 +78,8 @@ function setState(state: State, message = STATUS_CONTENT[state].message) {
 }
 
 function isPointInsideBounds(
-  point: { x: number; y: number },
-  bounds: { x: number; y: number; width: number; height: number },
+  point: Point,
+  bounds: Bounds,
 ) {
   return (
     point.x >= bounds.x &&
@@ -113,13 +113,11 @@ function clearScene() {
   currentHitRegions = [];
 }
 
-function shouldPlaceLabelBelow(bounds: { x: number; y: number }) {
+function shouldPlaceLabelBelow(bounds: Bounds) {
   return bounds.y < FEEDBACK_LABEL_BOTTOM_THRESHOLD;
 }
 
-function shouldAlignLabelToEnd(
-  bounds: { x: number; y: number; width: number },
-) {
+function shouldAlignLabelToEnd(bounds: Bounds) {
   return bounds.x + bounds.width > MAP_WIDTH - FEEDBACK_LABEL_RIGHT_MARGIN;
 }
 
@@ -171,7 +169,7 @@ function showHitFeedback(
   }
 }
 
-function findTopmostHitRegion(point: { x: number; y: number }) {
+function findTopmostHitRegion(point: Point) {
   for (let index = currentHitRegions.length - 1; index >= 0; index -= 1) {
     const region = currentHitRegions[index];
 
@@ -183,7 +181,7 @@ function findTopmostHitRegion(point: { x: number; y: number }) {
   return null;
 }
 
-function handleMapClick(point: { x: number; y: number }) {
+function handleMapClick(point: Point) {
   if (currentState !== STATE.playing) {
     return;
   }
