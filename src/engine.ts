@@ -27,7 +27,15 @@ interface Distractor {
   parts: Record<PaperDollLayer, HTMLImageElement>;
 }
 
-export type HitRegion = { type: "distractor" | "target"; bounds: Bounds };
+export interface HitRegion {
+  type: "distractor" | "target";
+  bounds: Bounds;
+};
+
+export interface SceneResult {
+  canvas: HTMLCanvasElement;
+  hitRegions: HitRegion[];
+}
 
 let loadedAssetsPromise: Promise<LoadedAssets> | undefined;
 const MAX_DISTRACTOR_PLACEMENT_ATTEMPTS = 60;
@@ -192,7 +200,7 @@ async function loadAssets(): Promise<LoadedAssets> {
         ASSET_MANIFEST[layer].map((
           source,
           index,
-        ) => [`${layer}:${index}`, source])
+        ) => [`${layer}:${index}`, source] as [string, string])
       ),
     ];
 
@@ -221,9 +229,7 @@ async function loadAssets(): Promise<LoadedAssets> {
   return loadedAssetsPromise;
 }
 
-export async function generateScene(): Promise<
-  { canvas: HTMLCanvasElement; hitRegions: HitRegion[] }
-> {
+export async function generateScene(): Promise<SceneResult> {
   const assets = await loadAssets();
   const canvas = createCanvas();
   const context = canvas.getContext("2d");
