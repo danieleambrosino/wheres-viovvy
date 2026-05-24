@@ -77,30 +77,6 @@ export function createInteraction({
     passive: true,
   });
 
-  // Fallback for environments that don't support Pointer Events (old iOS Safari).
-  let touchFallbackAdded = false;
-  const handleTouchEnd = (event: TouchEvent) => {
-    if (dragged) {
-      dragged = false;
-      return;
-    }
-
-    const touch = event.changedTouches && event.changedTouches[0];
-
-    if (!touch) return;
-
-    const fakeEvent = {
-      clientX: touch.clientX,
-      clientY: touch.clientY,
-    } as unknown as PointerEvent;
-    onMapClick(normalizeClickPosition(fakeEvent, canvas));
-  };
-
-  if (typeof PointerEvent === "undefined") {
-    canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
-    touchFallbackAdded = true;
-  }
-
   const resizeObserver = new ResizeObserver(() => {
     fitStageToViewport(stage, viewport, instance);
   });
@@ -118,9 +94,6 @@ export function createInteraction({
       window.removeEventListener("pointerup", handlePointerEnd);
       window.removeEventListener("pointercancel", handlePointerEnd);
       canvas.removeEventListener("pointerup", handleCanvasPointerUp);
-      if (touchFallbackAdded) {
-        canvas.removeEventListener("touchend", handleTouchEnd as EventListener);
-      }
       instance.dispose();
       stage.classList.remove("is-dragging");
       stage.style.transform = "";
