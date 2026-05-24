@@ -1,6 +1,7 @@
 import panzoom, { type PanzoomInstance } from "panzoom";
 
 import { MAP_HEIGHT, MAP_WIDTH } from "./assetsConfig";
+import { type Point } from "./engine";
 
 const DRAG_THRESHOLD = 8;
 
@@ -45,7 +46,7 @@ export function createInteraction({
   viewport: HTMLElement;
   stage: HTMLElement;
   canvas: HTMLCanvasElement;
-  onMapClick: (point: { x: number; y: number }) => void;
+  onMapClick: (point: Point) => void;
 }) {
   const instance = panzoom(stage, {
     bounds: true,
@@ -56,7 +57,7 @@ export function createInteraction({
     zoomDoubleClickSpeed: 1,
   });
 
-  let pointerOrigin: { x: number; y: number } | null = null;
+  let pointerOrigin: Point | null = null;
   let dragged = false;
 
   const handlePointerDown = (event: PointerEvent) => {
